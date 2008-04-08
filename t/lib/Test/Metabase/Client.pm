@@ -9,8 +9,6 @@ our $VERSION = '0.001';
 
 sub http_request {
   my ($self, $req) = @_;
-  use Data::Dumper;
-  warn Dumper($req);
   request($req);
 }
 

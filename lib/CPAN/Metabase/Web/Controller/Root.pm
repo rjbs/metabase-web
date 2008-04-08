@@ -32,7 +32,7 @@ sub dist : Chained('submit') Args(3) ActionClass('REST') {
   );
 }
 
-sub dist_PUT {
+sub dist_POST {
   my ($self, $c) = @_;
 
   $c->stash->{content} = $c->req->data->{content};
@@ -55,8 +55,6 @@ sub dist_PUT {
     entity   => { guid => $guid->as_string },
   );
 }
-
-BEGIN{ *dist_POST = \&dist_PUT; }
 
 # /guid/CC3F4AF4-0571-11DD-AA50-85A198B5225E
 #  guid 0
@@ -100,7 +98,6 @@ sub search_GET {
   my ($self, $c) = @_;
 
   my @args = @{ $c->stash->{search_args} };
-  warn "ARGS>> @args";
   my @data = $c->model('Metabase')->librarian->search(@args);
 
   return $self->status_ok(

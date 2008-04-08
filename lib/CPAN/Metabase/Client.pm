@@ -4,7 +4,7 @@ package CPAN::Metabase::Client;
 
 our $VERSION = '0.001';
 
-use HTTP::Request;
+use HTTP::Request::Common ();
 use JSON::XS;
 use Params::Validate;
 use LWP::UserAgent;
@@ -42,16 +42,14 @@ sub submit_fact {
 
   my $req_url = $self->abs_url($path);
 
-  my $req = HTTP::Request->new(
-    PUT => $req_url,
-    [
-      'Content-type' => 'text/x-json',
-      'Accept'       => 'text/x-json',
-    ],
-    JSON::XS->new->encode({
+  my $req = HTTP::Request::Common::POST(
+    $req_url,
+    Content_Type => 'text/x-json',
+    Accept       => 'text/x-json',
+    Content => JSON::XS->new->encode({
       version => $fact->schema_version,
       content => $fact->content_as_string,
-    }),
+    })
   );
 
   # Is it reasonable to return an HTTP::Response?  I don't know.  For now,
@@ -64,12 +62,9 @@ sub retrieve_fact {
 
   my $req_url = $self->abs_url("guid/$guid");
 
-  my $req = HTTP::Request->new(
-    GET => $req_url,
-    [
-      'Content-type' => 'text/x-json',
-      'Accept'       => 'text/x-json',
-    ]
+  my $req = HTTP::Request::Common::GET(
+     $req_url,
+    'Accept' => 'text/x-json',
   );
 
   $self->http_request($req);
@@ -80,12 +75,9 @@ sub search_stuff {
 
   my $req_url = $self->abs_url("search/" . join '/', @args);
 
-  my $req = HTTP::Request->new(
-    GET => $req_url,
-    [
-      'Content-type' => 'text/x-json',
-      'Accept'       => 'text/x-json',
-    ]
+  my $req = HTTP::Request::Common::GET(
+     $req_url,
+    'Accept' => 'text/x-json',
   );
 
   $self->http_request($req);
