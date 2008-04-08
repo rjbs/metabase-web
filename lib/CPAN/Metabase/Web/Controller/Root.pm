@@ -46,7 +46,7 @@ sub dist : Chained('submit') Args(3) ActionClass('REST') {
 sub dist_POST {
   my ($self, $c) = @_;
 
-  $c->stash->{content} = $c->req->data->{'payload'};
+  $c->stash->{content} = $c->req->data->{content};
 
   my $result = eval { $self->_gateway->handle($c->stash); 1; };
 
