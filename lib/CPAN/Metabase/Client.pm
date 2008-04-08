@@ -75,6 +75,22 @@ sub retrieve_fact {
   $self->http_request($req);
 }
 
+sub search_stuff {
+  my ($self, @args) = @_;
+
+  my $req_url = $self->abs_url("search/" . join '/', @args);
+
+  my $req = HTTP::Request->new(
+    GET => $req_url,
+    [
+      'Content-type' => 'text/x-json',
+      'Accept'       => 'text/x-json',
+    ]
+  );
+
+  $self->http_request($req);
+}
+
 sub abs_url {
   my ($self, $str) = @_;
   my $req_url = URI->new($str)->abs($self->url);

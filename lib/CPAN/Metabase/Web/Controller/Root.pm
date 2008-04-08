@@ -75,7 +75,7 @@ sub guid_GET {
     unless my $guid = $c->stash->{guid};
 
   return $self->status_not_found($c, message => 'no such resource')
-    unless my $fact = $c->model('Metabase')->archive->extract($guid);
+    unless my $fact = $c->model('Metabase')->librarian->extract($guid);
   
   return $self->status_ok(
     $c,
@@ -87,6 +87,25 @@ sub guid_GET {
       content        => $fact->content_as_string,
       user_id        => 'unknown',
     },
+  );
+}
+
+# /search/.....
+sub search : Chained('/') ActionClass('REST') Args(2) {
+  my ($self, $c, @args) = @_;
+  $c->stash->{search_args} = \@args;
+}
+
+sub search_GET {
+  my ($self, $c) = @_;
+
+  my @args = @{ $c->stash->{search_args} };
+  warn "ARGS>> @args";
+  my @data = $c->model('Metabase')->librarian->search(@args);
+
+  return $self->status_ok(
+    $c,
+    entity => \@data,
   );
 }
 
