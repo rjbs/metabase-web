@@ -6,6 +6,7 @@ our $VERSION = '0.001';
 
 use HTTP::Request;
 use JSON::XS;
+use Params::Validate;
 use LWP::UserAgent;
 use URI;
 
@@ -26,8 +27,9 @@ sub new {
   return $self;
 }   
 
-sub user_agent {
-  $_[0]->{_ua} ||= LWP::UserAgent->new;
+sub http_request {
+  my ($self, $request) = @_;
+  LWP::UserAgent->new->request($request);
 }
 
 sub submit_fact {
@@ -38,10 +40,10 @@ sub submit_fact {
     $fact->dist_file,
     $fact->type;
 
-  my $req_uri = URI->new($path)->abs($self->url);
+  my $req_url = $self->abs_url($path);
 
   my $req = HTTP::Request->new(
-    PUT => $req_uri,
+    PUT => $req_url,
     [
       'Content-type' => 'text/x-json',
       'Accept'       => 'text/x-json',
@@ -54,19 +56,28 @@ sub submit_fact {
 
   # Is it reasonable to return an HTTP::Response?  I don't know.  For now,
   # let's say yes.
-  my $response = $self->user_agent->request($req);
+  my $response = $self->http_request($req);
 }
 
 sub retrieve_fact {
   my ($self, $guid) = @_;
 
-  my $req_uri = URI->new("guid/$guid")->abs($self->url);
+  my $req_url = $self->abs_url("guid/$guid");
 
-  my $res = $self->user_agent->get(
-    $req_uri,
-    'Content-type' => 'text/x-json',
-    'Accept'       => 'text/x-json',
+  my $req = HTTP::Request->new(
+    GET => $req_url,
+    [
+      'Content-type' => 'text/x-json',
+      'Accept'       => 'text/x-json',
+    ]
   );
+
+  $self->http_request($req);
+}
+
+sub abs_url {
+  my ($self, $str) = @_;
+  my $req_url = URI->new($str)->abs($self->url);
 }
 
 1;
