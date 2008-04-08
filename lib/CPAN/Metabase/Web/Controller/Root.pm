@@ -9,15 +9,14 @@ our $VERSION = '0.001';
 $VERSION = eval $VERSION; # convert '1.23_45' to 1.2345
 
 use CPAN::Metabase::Gateway;
-use CPAN::Metabase::Analyzer::TestFact;
-use CPAN::Metabase::Storage::Filesystem;
+use CPAN::Metabase::Archive::Filesystem;
 use Data::GUID;
 
 my $gateway;
 BEGIN {
    $gateway ||= CPAN::Metabase::Gateway->new({
     fact_classes => [ 'CPAN::Metabase::Fact::TestFact' ],
-    storage      => CPAN::Metabase::Storage::Filesystem->new({
+    archive      => CPAN::Metabase::Archive::Filesystem->new({
       root_dir => './mb',
     }),
   });
@@ -92,7 +91,7 @@ sub guid_GET {
     unless my $guid = $c->stash->{guid};
 
   return $self->status_not_found($c, message => 'no such resource')
-    unless my $fact = $self->_gateway->storage->extract($guid);
+    unless my $fact = $self->_gateway->archive->extract($guid);
   
   return $self->status_ok(
     $c,
