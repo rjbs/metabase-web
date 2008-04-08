@@ -57,4 +57,16 @@ sub submit_fact {
   my $response = $self->user_agent->request($req);
 }
 
+sub retrieve_fact {
+  my ($self, $guid) = @_;
+
+  my $req_uri = URI->new("guid/$guid")->abs($self->url);
+
+  my $res = $self->user_agent->get(
+    $req_uri,
+    'Content-type' => 'text/x-json',
+    'Accept'       => 'text/x-json',
+  );
+}
+
 1;

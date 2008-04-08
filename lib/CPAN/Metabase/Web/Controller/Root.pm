@@ -11,6 +11,7 @@ $VERSION = eval $VERSION; # convert '1.23_45' to 1.2345
 use CPAN::Metabase::Gateway;
 use CPAN::Metabase::Analyzer::TestFact;
 use CPAN::Metabase::Storage::Filesystem;
+use Data::GUID;
 
 my $gateway;
 BEGIN {
@@ -71,5 +72,37 @@ sub dist_POST {
 }
 
 BEGIN{ *dist_PUT = \&dist_POST; }
+
+# /guid/CC3F4AF4-0571-11DD-AA50-85A198B5225E
+#  guid 0
+sub guid : Chained('/') Args(1) ActionClass('REST') {
+  my ($self, $c, $guid) = @_;
+
+  if (my $guid = eval { Data::GUID->from_string($guid) }) {
+    $c->stash->{guid} = $guid;
+  }
+}
+
+sub guid_GET {
+  my ($self, $c) = @_;
+
+  return $self->status_bad_request($c, message => "invalid guid")
+    unless my $guid = $c->stash->{guid};
+
+  return $self->status_not_found($c, message => 'no such resource')
+    unless my $fact = $self->_gateway->storage->extract($guid);
+  
+  return $self->status_ok(
+    $c,
+    entity => {
+      dist_author    => $fact->dist_author,
+      dist_file      => $fact->dist_file,
+      type           => $fact->type,
+      schema_version => $fact->schema_version,
+      content        => $fact->content_as_string,
+      user_id        => 'unknown',
+    },
+  );
+}
 
 1;
