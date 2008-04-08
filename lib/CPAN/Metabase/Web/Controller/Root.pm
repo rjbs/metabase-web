@@ -3,21 +3,26 @@ use warnings;
 package CPAN::Metabase::Web::Controller::Root;
 use base 'Catalyst::Controller::REST';
 
-# XXX: until there's a real analyzer
-use lib "$ENV{HOME}/code/projects/CPAN-Metabase/t/lib";
+use lib "$ENV{HOME}/code/projects/CPAN-Metabase/lib";
 
 our $VERSION = '0.001';
 $VERSION = eval $VERSION; # convert '1.23_45' to 1.2345
 
 use CPAN::Metabase::Gateway;
-use CPAN::Metabase::Analyzer::Test;
+use CPAN::Metabase::Analyzer::TestFact;
+use CPAN::Metabase::Storage::Filesystem;
 
 my $gateway;
-sub _gateway {
-  return $gateway ||= CPAN::Metabase::Gateway->new({
-    analyzers => [ CPAN::Metabase::Analyzer::Test->new ],
+BEGIN {
+   $gateway ||= CPAN::Metabase::Gateway->new({
+    analyzers => [ CPAN::Metabase::Analyzer::TestFact->new ],
+    storage   => CPAN::Metabase::Storage::Filesystem->new({
+      root_dir => './mb',
+    }),
   });
 }
+
+sub _gateway { $gateway }
 
 # /submit/dist/RJBS/Acme-ProgressBar-1.124.tar.gz/Test-Report
 #  submit dist 0    1                             2
