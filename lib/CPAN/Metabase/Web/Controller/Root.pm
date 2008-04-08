@@ -3,26 +3,10 @@ use warnings;
 package CPAN::Metabase::Web::Controller::Root;
 use base 'Catalyst::Controller::REST';
 
-use lib "$ENV{HOME}/code/projects/CPAN-Metabase/lib";
-
 our $VERSION = '0.001';
 $VERSION = eval $VERSION; # convert '1.23_45' to 1.2345
 
-use CPAN::Metabase::Gateway;
-use CPAN::Metabase::Archive::Filesystem;
 use Data::GUID;
-
-my $gateway;
-BEGIN {
-   $gateway ||= CPAN::Metabase::Gateway->new({
-    fact_classes => [ 'CPAN::Metabase::Fact::TestFact' ],
-    archive      => CPAN::Metabase::Archive::Filesystem->new({
-      root_dir => './mb',
-    }),
-  });
-}
-
-sub _gateway { $gateway }
 
 # /submit/dist/RJBS/Acme-ProgressBar-1.124.tar.gz/Test-Report
 #  submit dist 0    1                             2
@@ -55,7 +39,7 @@ sub dist_PUT {
 
   # XXX: In the future, this might be a queue id.  That might be a guid.  Time
   # will tell! -- rjbs, 2008-04-08
-  my $guid = eval { $self->_gateway->handle($c->stash); };
+  my $guid = eval { $c->model('Metabase')->gateway->handle($c->stash); };
 
   unless ($guid) {
     my $error = $@ || '(unknown error)';
@@ -91,7 +75,7 @@ sub guid_GET {
     unless my $guid = $c->stash->{guid};
 
   return $self->status_not_found($c, message => 'no such resource')
-    unless my $fact = $self->_gateway->archive->extract($guid);
+    unless my $fact = $c->model('Metabase')->archive->extract($guid);
   
   return $self->status_ok(
     $c,
