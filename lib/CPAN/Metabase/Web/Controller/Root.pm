@@ -22,12 +22,10 @@ sub _gateway {
 # /submit/dist/RJBS/Acme-ProgressBar-1.124.tar.gz/Test-Report
 #  submit dist 0    1                             2
 sub submit : Chained('/') CaptureArgs(0) {
-  warn "SUBMIT @_";
 }
 
 sub dist : Chained('submit') Args(3) ActionClass('REST') {
   my ($self, $c, $dist_author, $dist_file, $type) = @_;
-  warn "DIST @_";
 
   { # XXX: 
     return $self->status_bad_request($c, message => 'invalid dist author')
@@ -48,9 +46,9 @@ sub dist : Chained('submit') Args(3) ActionClass('REST') {
 sub dist_POST {
   my ($self, $c) = @_;
 
-  $c->stash->{content} = $c->req->param('payload');
+  $c->stash->{content} = $c->req->data->{'payload'};
 
-  my $result = eval { $self->_gateway->handle($c->stash); };
+  my $result = eval { $self->_gateway->handle($c->stash); 1; };
 
   unless ($result) {
     my $error = $@;
@@ -60,7 +58,6 @@ sub dist_POST {
     return $self->status_bad_request($c, message => "gateway failure: $error");
   }
 
-  warn "ABOUT TO BE CREATED";
   return $self->status_created(
     $c,
     location => 'http://www.google.com/',
