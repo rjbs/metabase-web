@@ -39,7 +39,7 @@ sub dist_POST {
 
   # XXX: In the future, this might be a queue id.  That might be a guid.  Time
   # will tell! -- rjbs, 2008-04-08
-  my $guid = eval { $c->model('Metabase')->gateway->handle($c->stash); };
+  my $guid = eval { $c->model->gateway->handle($c->stash); };
 
   unless ($guid) {
     my $error = $@ || '(unknown error)';
@@ -73,7 +73,7 @@ sub guid_GET {
     unless my $guid = $c->stash->{guid};
 
   return $self->status_not_found($c, message => 'no such resource')
-    unless my $fact = $c->model('Metabase')->librarian->extract($guid);
+    unless my $fact = $c->model->librarian->extract($guid);
   
   return $self->status_ok(
     $c,
@@ -98,7 +98,7 @@ sub search_GET {
   my ($self, $c) = @_;
 
   my @args = @{ $c->stash->{search_args} };
-  my @data = $c->model('Metabase')->librarian->search(@args);
+  my @data = $c->model->librarian->search(@args);
 
   return $self->status_ok(
     $c,

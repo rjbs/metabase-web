@@ -6,9 +6,27 @@ use lib 't/lib';
 
 use Test::More 'no_plan';
 
+use File::Temp ();
+use Path::Class;
+use YAML::Syck;
+
+BEGIN {
+  my $root        = File::Temp::tempdir(CLEANUP => 1);
+  (my $archive_dir = dir($root)->subdir('store'))->mkpath;
+
+  my $config = {
+    'Model::Metabase' => {
+      archive_root => "$archive_dir",
+    }
+  };
+
+  my $config_file = dir($root)->file('test.yaml');
+  YAML::Syck::DumpFile("$config_file", $config);
+  $ENV{CPAN_METABASE_WEB_CONFIG} = $config_file;
+}
+
 use Test::Metabase::Client;
 use CPAN::Metabase::Fact::TestFact;
-use Data::Dumper;
 
 my $client = Test::Metabase::Client->new({
   url  => 'http://localhost:3000',
