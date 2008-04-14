@@ -6,7 +6,6 @@ use lib 't/lib';
 use Test::More 'no_plan';
 use Test::Metabase::Web::Config;
 use Test::Metabase::Client;
-use CPAN::Metabase::Fact::TestFact;
 
 my $client = Test::Metabase::Client->new({
   user => 'rjbs',
@@ -20,5 +19,4 @@ my $fact = CPAN::Metabase::Fact::TestFact->new({
 });
 
 my $res = $client->submit_fact($fact);
-
 is($res->code, 201, "resource created!");
