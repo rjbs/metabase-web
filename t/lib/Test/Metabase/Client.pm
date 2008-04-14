@@ -7,6 +7,14 @@ use Catalyst::Test 'CPAN::Metabase::Web';
 
 our $VERSION = '0.001';
 
+sub new {
+  my ($self, $arg) = @_;
+  $self->SUPER::new({
+    url => 'http://metabase.cpan.example/',
+    %$arg,
+  });
+}
+
 sub http_request {
   my ($self, $req) = @_;
   request($req);

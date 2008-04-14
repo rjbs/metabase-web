@@ -1,7 +1,6 @@
 #!/usr/bin/perl
 use strict;
 use warnings;
-
 use lib 't/lib';
 
 use Test::More 'no_plan';
@@ -10,7 +9,6 @@ use Test::Metabase::Client;
 use CPAN::Metabase::Fact::TestFact;
 
 my $client = Test::Metabase::Client->new({
-  url  => 'http://localhost:3000',
   user => 'rjbs',
   key  => 'kidneys',
 });
