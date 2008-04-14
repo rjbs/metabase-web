@@ -11,12 +11,14 @@ use Path::Class;
 use YAML::Syck;
 
 BEGIN {
-  my $root        = File::Temp::tempdir(CLEANUP => 1);
-  (my $archive_dir = dir($root)->subdir('store'))->mkpath;
+  my $root        = dir(File::Temp::tempdir(CLEANUP => 1));
+  (my $archive_dir = $root->subdir('store'))->mkpath;
+  my $index_file  = $root->file('index.txt');
+  close $index_file->openw; # create the file, least the exists-check die!
 
   my $config = {
-    archive => { root_dir   => "$archive_dir" },
-    index   => { index_file => "index.txt" },
+    archive => { root_dir   => $archive_dir },
+    index   => { index_file => $index_file  },
     fact_classes => [ 'CPAN::Metabase::Fact::TestFact' ],
   };
 
