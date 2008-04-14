@@ -15,13 +15,13 @@ BEGIN {
   (my $archive_dir = dir($root)->subdir('store'))->mkpath;
 
   my $config = {
-    'Model::Metabase' => {
-      archive_root => "$archive_dir",
-    }
+    archive => { root_dir   => "$archive_dir" },
+    index   => { index_file => "index.txt" },
+    fact_classes => [ 'CPAN::Metabase::Fact::TestFact' ],
   };
 
   my $config_file = dir($root)->file('test.yaml');
-  YAML::Syck::DumpFile("$config_file", $config);
+  YAML::Syck::DumpFile("$config_file", { 'Model::Metabase' => $config });
   $ENV{CPAN_METABASE_WEB_CONFIG} = $config_file;
 }
 
