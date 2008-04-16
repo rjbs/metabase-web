@@ -15,21 +15,21 @@ sub submit : Chained('/') CaptureArgs(1) {
   $c->stash->{type} = $type;
 }
 
-sub dist : Chained('submit') Args(2) ActionClass('REST') {
-  my ($self, $c, $dist_author, $dist_file) = @_;
+sub dist : Chained('submit') ActionClass('REST') {
+  my ($self, $c, $dist_author, @dist_file_parts) = @_;
 
   { # XXX: obviously, this should be some kind of pluggable whatever thing
     return $self->status_bad_request($c, message => 'invalid dist author')
       unless $dist_author =~ /\A[A-Z]+\z/;
 
     return $self->status_bad_request($c, message => 'invalid distribution')
-      unless $dist_file =~ /\.tar\.gz\z/;
+      unless @_ >= 4 and $_[-1] =~ /\.(?:tar\.gz|zip)\z/;
   }
 
   $c->stash(
     user_id     => 'rjbs', # XXX: this needs to come from auth
     dist_author => $dist_author,
-    dist_file   => $dist_file,
+    dist_file   => join('/', @dist_file_parts),
     type        => $c->stash->{type},
   );
 }
