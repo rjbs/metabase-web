@@ -20,8 +20,7 @@ my $client = Test::Metabase::Client->new({
 
 {
   my $fact = CPAN::Metabase::Fact::TestFact->new({
-    dist_author => 'RJBS',
-    dist_file   => 'Foo-Bar-1.23.tar.gz',
+    resource    => 'RJBS/Foo-Bar-1.23.tar.gz',
     content     => 'this power powered by power',
   });
 
@@ -31,8 +30,7 @@ my $client = Test::Metabase::Client->new({
 
 {
   my $fact = CPAN::Metabase::Fact::TestFact->new({
-    dist_author => 'DAGOLDEN',
-    dist_file   => 'Bar-Baz-0.01.tar.gz',
+    resource    => 'RJBS/Bar-Baz-0.01.tar.gz',
     content     => 'heavens to murgatroid!',
   });
 

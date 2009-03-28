@@ -10,38 +10,32 @@ use Data::GUID;
 
 # /submit/Test-Report/dist/RJBS/Acme-ProgressBar-1.124.tar.gz/
 #  submit 0           dist 0    1
-sub submit : Chained('/') CaptureArgs(1) {
+sub submit : Chained('/') Args(1) ActionClass('REST') {
   my ($self, $c, $type) = @_;
+
   $c->stash->{type} = $type;
 }
 
-sub dist : Chained('submit') ActionClass('REST') {
-  my ($self, $c, $dist_author, @dist_file_parts) = @_;
-
-  { # XXX: obviously, this should be some kind of pluggable whatever thing
-    return $self->status_bad_request($c, message => 'invalid dist author')
-      unless $dist_author =~ /\A[A-Z]+\z/;
-
-    return $self->status_bad_request($c, message => 'invalid distribution')
-      unless @_ >= 4 and $_[-1] =~ /\.(?:tar\.gz|zip)\z/;
-  }
-
-  $c->stash(
-    user_id     => 'rjbs', # XXX: this needs to come from auth
-    dist_author => $dist_author,
-    dist_file   => join('/', @dist_file_parts),
-    type        => $c->stash->{type},
-  );
-}
-
-sub dist_POST {
+sub submit_POST {
   my ($self, $c) = @_;
 
-  $c->stash->{content} = $c->req->data->{content};
+  # XXX: This is a tremendous bodge.  -- rjbs, 2009-03-28
+  my $struct = $c->req->data->[0];
+  $struct->{content} = $c->req->data->[1];
+
+  Carp::confess("URL and POST types do not match")
+    unless $c->stash->{type} eq $struct->{core_metadata}{type}[1];
 
   # XXX: In the future, this might be a queue id.  That might be a guid.  Time
   # will tell! -- rjbs, 2008-04-08
-  my $guid = eval { $c->model('Metabase')->gateway->handle($c->stash); };
+  my $guid = eval {
+    $c->model('Metabase')->gateway->handle({
+      request => {
+        user_id => 'rjbs',
+      },
+      struct  => $struct,
+    });
+  };
 
   unless ($guid) {
     my $error = $@ || '(unknown error)';
