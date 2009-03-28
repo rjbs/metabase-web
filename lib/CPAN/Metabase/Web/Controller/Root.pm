@@ -41,7 +41,7 @@ sub dist_POST {
 
   # XXX: In the future, this might be a queue id.  That might be a guid.  Time
   # will tell! -- rjbs, 2008-04-08
-  my $guid = eval { $c->model->gateway->handle($c->stash); };
+  my $guid = eval { $c->model('Metabase')->gateway->handle($c->stash); };
 
   unless ($guid) {
     my $error = $@ || '(unknown error)';
@@ -100,7 +100,7 @@ sub simple : Chained('search') ActionClass('REST') {
 sub simple_GET {
   my ($self, $c, @args) = @_;
 
-  my $data = $c->model->librarian->search(@args);
+  my $data = $c->model('Metabase')->librarian->search(@args);
 
   return $self->status_ok(
     $c,
