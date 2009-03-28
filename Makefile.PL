@@ -7,7 +7,7 @@ requires('CPAN::Metabase' => 0);
 requires('Catalyst::Runtime' => 0);
 requires('Data::GUID'   => 0);
 
-test_requires('CPAN::Metabase::Client');
+test_requires('CPAN::Metabase::Client::Simple');
 
 tests_recursive;
 extra_tests;

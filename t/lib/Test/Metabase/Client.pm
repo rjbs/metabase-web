@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 package Test::Metabase::Client;
-use base 'CPAN::Metabase::Client';
+use base 'CPAN::Metabase::Client::Simple';
 
 use Catalyst::Test 'CPAN::Metabase::Web';
 
