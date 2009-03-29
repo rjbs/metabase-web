@@ -40,6 +40,22 @@ my $client = Test::Metabase::Client->new({
 
   my $res = $client->submit_fact($fact);
   is($res->code, 201, "resource created!");
+
+  my $guid = $res->header('Location');
+  $guid =~ s{^/guid/}{};
+
+  my $res = $client->retrieve_fact($guid);
+  my $json = $res->content;
+  my $struct = JSON->new->decode($json);
+
+  my $retr_fact  = CPAN::Metabase::Fact::TestFact->from_struct($struct);
+
+  is($retr_fact->guid, $fact->guid, "we got the same guid-ed fact");
+  is_deeply(
+    $retr_fact->content,
+    $fact->content,
+    "content is identical, too",
+  );
 }
 
 {

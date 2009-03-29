@@ -62,18 +62,11 @@ sub guid_GET {
     unless my $guid = $c->stash->{guid};
 
   return $self->status_not_found($c, message => 'no such resource')
-    unless my $fact = $c->model->librarian->extract($guid);
+    unless my $fact = $c->model('Metabase')->librarian->extract($guid);
   
   return $self->status_ok(
     $c,
-    entity => {
-      content  => $fact->content_as_bytes,
-      metadata => {
-        core     => $fact->core_metadata,
-        content  => $fact->content_metadata,
-        resource => $fact->resource_metadata,
-      },
-    },
+    entity => $fact->as_struct,
   );
 }
 
