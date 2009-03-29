@@ -24,6 +24,9 @@ sub submit_POST {
   Carp::confess("URL and POST types do not match")
     unless $c->stash->{type} eq $struct->{metadata}{core}{type}[1];
 
+  # XXX: How do we get the user & user_id? richdawe, 2009-03-29
+  $struct->{metadata}{core}{user_id} ||= [ 0, 'rjbs' ];
+
   # XXX: In the future, this might be a queue id.  That might be a guid.  Time
   # will tell! -- rjbs, 2008-04-08
   my $guid = eval {
@@ -62,7 +65,7 @@ sub guid_GET {
     unless my $guid = $c->stash->{guid};
 
   return $self->status_not_found($c, message => 'no such resource')
-    unless my $fact = $c->model->librarian->extract($guid);
+    unless my $fact = $c->model('Metabase')->librarian->extract($guid);
   
   return $self->status_ok(
     $c,
