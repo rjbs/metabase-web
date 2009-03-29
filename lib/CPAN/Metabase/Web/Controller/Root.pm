@@ -19,22 +19,15 @@ sub submit : Chained('/') Args(1) ActionClass('REST') {
 sub submit_POST {
   my ($self, $c) = @_;
 
-  # XXX: This is a tremendous bodge.  -- rjbs, 2009-03-28
-  my $struct = $c->req->data->[0];
-  $struct->{content} = $c->req->data->[1];
+  my $struct = $c->req->data;
 
   Carp::confess("URL and POST types do not match")
-    unless $c->stash->{type} eq $struct->{core_metadata}{type}[1];
+    unless $c->stash->{type} eq $struct->{metadata}{core}{type}[1];
 
   # XXX: In the future, this might be a queue id.  That might be a guid.  Time
   # will tell! -- rjbs, 2008-04-08
   my $guid = eval {
-    $c->model('Metabase')->gateway->handle({
-      request => {
-        user_id => 'rjbs',
-      },
-      struct  => $struct,
-    });
+    $c->model('Metabase')->gateway->handle($struct);
   };
 
   unless ($guid) {
@@ -47,8 +40,8 @@ sub submit_POST {
 
   return $self->status_created(
     $c,
-    location => '/guid/' . $guid->as_string, # XXX: uri_for or something?
-    entity   => { guid => $guid->as_string },
+    location => '/guid/' . $guid, # XXX: uri_for or something?
+    entity   => { guid => $guid },
   );
 }
 
@@ -74,12 +67,12 @@ sub guid_GET {
   return $self->status_ok(
     $c,
     entity => {
-      dist_author    => $fact->dist_author,
-      dist_file      => $fact->dist_file,
-      type           => $fact->type,
-      schema_version => $fact->schema_version,
-      content        => $fact->content_as_string,
-      user_id        => 'unknown',
+      content  => $fact->content_as_bytes,
+      metadata => {
+        core     => $fact->core_metadata,
+        content  => $fact->content_metadata,
+        resource => $fact->resource_metadata,
+      },
     },
   );
 }

@@ -13,10 +13,12 @@ my $client = Test::Metabase::Client->new({
 });
 
 my $fact = CPAN::Metabase::Fact::TestFact->new({
-  dist_author => 'RJBS',
-  dist_file   => 'Foo-Bar-1.23.tar.gz',
-  content     => 'this power powered by power',
+  resource => 'RJBS/Foo-Bar-1.23.tar.gz',
+  content  => 'this power powered by power',
 });
+
+# XXX: have the client add this stuff
+$fact->{metadata}{core}{user_id}  = [ Str => 'rjbs' ];
 
 my $res = $client->submit_fact($fact);
 is($res->code, 201, "resource created!");
