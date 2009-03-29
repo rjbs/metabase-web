@@ -44,8 +44,8 @@ my $client = Test::Metabase::Client->new({
   my $guid = $res->header('Location');
   $guid =~ s{^/guid/}{};
 
-  my $res = $client->retrieve_fact($guid);
-  my $json = $res->content;
+  my $res_2 = $client->retrieve_fact($guid);
+  my $json = $res_2->content;
   my $struct = JSON->new->decode($json);
 
   my $retr_fact  = CPAN::Metabase::Fact::TestFact->from_struct($struct);
