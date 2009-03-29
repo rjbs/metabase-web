@@ -13,7 +13,9 @@ my $client = Test::Metabase::Client->new({
 });
 
 {
-  my @results = $client->search(simple => [ dist_author => 'RJBS' ]);
+  my @results = $client->search(simple => [
+    'core.type' => 'CPAN-Metabase-Fact-TestFact'
+  ]);
 
   is(@results, 0, "nothing found in brand-spanking-new archive");
 }
@@ -22,6 +24,7 @@ my $client = Test::Metabase::Client->new({
   my $fact = CPAN::Metabase::Fact::TestFact->new({
     resource    => 'RJBS/Foo-Bar-1.23.tar.gz',
     content     => 'this power powered by power',
+    user_id     => 'rjbs',
   });
 
   my $res = $client->submit_fact($fact);
@@ -32,6 +35,7 @@ my $client = Test::Metabase::Client->new({
   my $fact = CPAN::Metabase::Fact::TestFact->new({
     resource    => 'RJBS/Bar-Baz-0.01.tar.gz',
     content     => 'heavens to murgatroid!',
+    user_id     => 'rjbs',
   });
 
   my $res = $client->submit_fact($fact);
@@ -39,7 +43,13 @@ my $client = Test::Metabase::Client->new({
 }
 
 {
-  my @results = $client->search(simple => [ dist_author => 'RJBS' ]);
+  my @results = $client->search(simple => [
+    'core.type' => 'CPAN-Metabase-Fact-TestFact'
+  ]);
 
-  is(@results, 1, "we get one result for author = RJBS now");
+  is(
+    @results,
+    2,
+    "we get two results for core.type = CPAN-Metabase-Fact-TestFact",
+  );
 }
