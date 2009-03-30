@@ -73,3 +73,29 @@ use CPAN::Metabase::User::Profile;
   ok(! $ok, "resource rejected!");
   like($error, qr/unknown submitter/, "rejected for the right reasons");
 }
+
+{
+  # We use this guy for failing to submit.  He is in MB, but secret is wrong.
+  my $bad_pw = CPAN::Metabase::User::Profile->open({
+    resource => 'metabase:user:74B9A2EA-1D1A-11DE-BE21-DD62421C7A0A',
+    guid     => '74B9A2EA-1D1A-11DE-BE21-DD62421C7A0A',
+  });
+
+  $bad_pw->add('CPAN::Metabase::User::EmailAddress' => 'jdoe@example.com');
+  $bad_pw->add('CPAN::Metabase::User::FullName'     => 'John Doe');
+  $bad_pw->add('CPAN::Metabase::User::Secret'       => 'toriamos');
+
+  $bad_pw->close;
+
+  my $bad_client = Test::Metabase::Client->new({ profile => $bad_pw });
+
+  my $fact = CPAN::Metabase::Fact::TestFact->new({
+    resource => 'RJBS/Foo-Bar-1.23.tar.gz',
+    content  => 'this power powered by power',
+  });
+
+  my $ok    = eval { $bad_client->submit_fact($fact); 1 };
+  my $error = $@;
+  ok(! $ok, "resource rejected!");
+  like($error, qr/unknown submitter/, "rejected for the right reasons");
+}
