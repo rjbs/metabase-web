@@ -20,12 +20,11 @@ sub submit_POST {
   my ($self, $c) = @_;
 
   my $struct = $c->req->data;
+  my $fact_struct = $struct->{fact};
+  my $submitter_struct = $struct->{submitter};
 
   Carp::confess("URL and POST types do not match")
-    unless $c->stash->{type} eq $struct->{metadata}{core}{type}[1];
-
-  # XXX: How do we get the user & user_id? richdawe, 2009-03-29
-  $struct->{metadata}{core}{user_id} ||= [ 0, 'rjbs' ];
+    unless $c->stash->{type} eq $fact_struct->{metadata}{core}{type}[1];
 
   # XXX: In the future, this might be a queue id.  That might be a guid.  Time
   # will tell! -- rjbs, 2008-04-08

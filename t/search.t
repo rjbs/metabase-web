@@ -8,8 +8,14 @@ use Test::Metabase::Web::Config;
 use Test::Metabase::Client;
 
 my $client = Test::Metabase::Client->new({
-  user => 'rjbs',
-  key  => 'kidneys',
+  # XXX: Clearly this should be a fact. -- rjbs, 2009-03-30
+  profile => {
+    metadata => {
+      core => {
+        guid => [ Str => '74B9A2EA-1D1A-11DE-BE21-DD62421C7A0A' ],
+      }
+    }
+  }
 });
 
 {
