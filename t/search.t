@@ -3,6 +3,8 @@ use strict;
 use warnings;
 use lib 't/lib';
 
+use Test::More skip_all => 'this requires a client that can search';
+
 use Test::More 'no_plan';
 use Test::Metabase::Web::Config;
 use Test::Metabase::Client;
