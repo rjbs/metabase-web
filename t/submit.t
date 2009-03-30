@@ -27,7 +27,7 @@ my $fact = CPAN::Metabase::Fact::TestFact->new({
 my $ok = eval { $client->submit_fact($fact); 1 };
 ok($ok, "resource created!") or diag $@;
 
-my $fact_struct = $client->retrieve_fact_raw($guid);
+my $fact_struct = $client->retrieve_fact_raw($fact->guid);
 
 my $retr_fact  = CPAN::Metabase::Fact::TestFact->from_struct($fact_struct);
 
