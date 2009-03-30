@@ -6,6 +6,10 @@ use File::Temp ();
 use Path::Class;
 use JSON;
 
+# XXX: Part of a monstrous hack perpetrated here and in Model::Metabase.
+my $CURRENT_GATEWAY;
+sub gateway { $CURRENT_GATEWAY }
+
 sub import {
   my %tmp;
   my $root = dir(File::Temp::tempdir(CLEANUP => 1));
@@ -41,6 +45,12 @@ sub import {
   open my $fh, '>', $config_file or die "can't write to $config_file: $!";
   print { $fh } JSON->new->encode($config);
   $ENV{CPAN_METABASE_WEB_CONFIG} = $config_file;
+
+  $CPAN::Metabase::Web::Model::Metabase::COMPONENT_CALLBACK = sub {
+    $CURRENT_GATEWAY = shift;
+  };
+
+  return;
 }
 
 1;

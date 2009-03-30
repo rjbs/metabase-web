@@ -81,6 +81,12 @@ sub COMPONENT {
     },
   );
 
+  # XXX: This is sort of a massive hack, but it makes testing easy by giving us
+  # access to the gateway the test server will use. -- rjbs, 2009-03-30
+  if (my $code = our $COMPONENT_CALLBACK) {
+    $code->($gateway);
+  }
+
   $self->{gateway} = $gateway;
   return $self;
 }

@@ -34,9 +34,10 @@ sub submit_POST {
 
   unless ($guid) {
     my $error = $@ || '(unknown error)';
-    warn $error;
-
-    return $self->status_bad_request($c, message => "internal gateway error");
+    $c->log("gateway rejected fact: $error");
+    my ($reason) = $error =~ /^reason: (.+)/;
+    $reason ||= 'internal gateway error';
+    return $self->status_bad_request($c, message => $reason);
   }
 
   return $self->status_created(
