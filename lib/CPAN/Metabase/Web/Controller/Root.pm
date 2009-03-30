@@ -29,15 +29,14 @@ sub submit_POST {
   # XXX: In the future, this might be a queue id.  That might be a guid.  Time
   # will tell! -- rjbs, 2008-04-08
   my $guid = eval {
-    $c->model('Metabase')->gateway->handle($struct);
+    $c->model('Metabase')->gateway->handle_submission($struct);
   };
 
   unless ($guid) {
     my $error = $@ || '(unknown error)';
-    warn $error; # XXX: we should catch and report Permission exceptions, etc
-                 # -- rjbs, 2008-04-07
+    warn $error;
 
-    return $self->status_bad_request($c, message => "gateway failure: $error");
+    return $self->status_bad_request($c, message => "internal gateway error");
   }
 
   return $self->status_created(

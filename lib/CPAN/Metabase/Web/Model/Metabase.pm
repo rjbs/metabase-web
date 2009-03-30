@@ -7,10 +7,19 @@ use Catalyst::Utils;
 use Params::Util qw(_CLASS);
 
 my $default_config = {
-  archive   => { CLASS => 'CPAN::Metabase::Archive::Filesystem' },
-  gateway   => { CLASS => 'CPAN::Metabase::Gateway'             },
-  index     => { CLASS => 'CPAN::Metabase::Index::FlatFile'     },
-  librarian => { CLASS => 'CPAN::Metabase::Librarian'           },
+  gateway   => {
+    CLASS => 'CPAN::Metabase::Gateway',
+    librarian => {
+      CLASS => 'CPAN::Metabase::Librarian',
+      archive => { CLASS => 'CPAN::Metabase::Archive::Filesystem' },
+      index   => { CLASS => 'CPAN::Metabase::Index::FlatFile'     },
+    },
+    secret_librarian => {
+      CLASS   => 'CPAN::Metabase::Librarian',
+      archive => { CLASS => 'CPAN::Metabase::Archive::Filesystem' },
+      index   => { CLASS => 'CPAN::Metabase::Index::FlatFile'     },
+    },
+  },
 };
 
 sub _initialize {
@@ -38,30 +47,37 @@ sub COMPONENT {
     eval "require $fact_class; 1" or die "couldn't load fact class: $@";
   }
 
-  my ($archive, $index);
+  my %librarian;
 
-  if ($config->{database}) {
-    # This branch is here mostly to remind me that something like this should
-    # be possible. -- rjbs, 2008-04-14
-    $archive = $index = $self->_initialize($config->{database});
-  } else {
-    $archive = $self->_initialize($config->{archive});
-    $index   = $self->_initialize($config->{index});
+  for my $which (qw(librarian secret_librarian)) {
+    my ($archive, $index);
+    my $config = $config->{gateway}{$which};
+
+    if ($config->{database}) {
+      # This branch is here mostly to remind me that something like this should
+      # be possible. -- rjbs, 2008-04-14
+      $archive = $index = $self->_initialize($config->{database});
+    } else {
+      $archive = $self->_initialize($config->{archive});
+      $index   = $self->_initialize($config->{index});
+    }
+    
+    delete @$config{qw(database archive index)};
+
+    $librarian{ $which } = $self->_initialize(
+      $config,
+      {
+        archive => $archive,
+        index   => $index,
+      },
+    );
   }
-
-  my $librarian = $self->_initialize(
-    $config->{librarian},
-    {
-      archive => $archive,
-      index   => $index,
-    },
-  );
 
   my $gateway = $self->_initialize(
     $config->{gateway},
     {
       fact_classes => $fact_classes,
-      librarian    => $librarian,
+      %librarian
     },
   );
 

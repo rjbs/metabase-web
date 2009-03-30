@@ -5,7 +5,8 @@ all_from('lib/CPAN/Metabase/Web.pm');
 requires('CPAN::Metabase' => 0);
 
 requires('Catalyst::Runtime' => 0);
-requires('Data::GUID'   => 0);
+requires('Data::GUID'        => 0);
+requires('JSON'              => 2);
 
 test_requires('CPAN::Metabase::Client::Simple');
 
