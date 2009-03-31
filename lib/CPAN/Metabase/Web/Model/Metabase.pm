@@ -42,6 +42,8 @@ sub COMPONENT {
   Carp::croak "no fact_classes supplied to $class configuration"
     unless $fact_classes and @$fact_classes;
 
+  # XXX why are we loading classes here?  why not leave to gateway instead?
+  # -- dagolden, 2009-03-31
   for my $fact_class (@$fact_classes) {
     Carp::croak "invalid fact class: $fact_class" unless _CLASS($fact_class);
     eval "require $fact_class; 1" or die "couldn't load fact class: $@";
