@@ -36,7 +36,7 @@ my $config = {
   }
 };
 
-my $config_file = $root_dir->file('test.json');
+my $config_file = $root_dir->file('config.json');
 my $fh = $config_file->openw;
 print { $fh } JSON->new->encode($config);
 close $fh;
