@@ -1,0 +1,13 @@
+These commands create and run a simple CPAN Testers metabase
+
+  $ generate_config.pl /tmp/cpan-testers-metabase/
+  $ cpan-testers-metabase.pl -C /tmp/cpan-testers-metabase/test.json
+
+Or, use the autorun.pl script to use a directory or else a temp one
+
+  $ autorun.pl
+
+Or
+
+  $ autorun.pl /some/directory
+
