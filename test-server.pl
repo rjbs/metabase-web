@@ -50,9 +50,9 @@ if ( $debug ) {
 
 # This is require instead of use so that the above environment
 # variables can be set at runtime.
-BEGIN{ $ENV{CPAN_METABASE_ROOT} = 'mb'; }
-require CPAN::Metabase::Web;
-CPAN::Metabase::Web->run( $port, $host, {
+BEGIN{ $ENV{METABASE_ROOT} = 'mb'; }
+require Metabase::Web;
+Metabase::Web->run( $port, $host, {
     argv              => \@argv,
     'fork'            => $fork,
     keepalive         => $keepalive,

@@ -44,7 +44,7 @@ sub import {
 
   open my $fh, '>', $config_file or die "can't write to $config_file: $!";
   print { $fh } JSON->new->encode($config);
-  $ENV{CPAN_METABASE_WEB_CONFIG} = $config_file;
+  $ENV{METABASE_WEB_CONFIG} = $config_file;
 
   $Metabase::Web::Model::Metabase::COMPONENT_CALLBACK = sub {
     $CURRENT_GATEWAY = shift;

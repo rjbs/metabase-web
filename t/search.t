@@ -22,7 +22,7 @@ my $client = Test::Metabase::Client->new({
 
 {
   my @results = $client->search(simple => [
-    'core.type' => 'CPAN-Metabase-Fact-TestFact'
+    'core.type' => 'Metabase-Fact-TestFact'
   ]);
 
   is(@results, 0, "nothing found in brand-spanking-new archive");
@@ -68,12 +68,12 @@ my $client = Test::Metabase::Client->new({
 
 {
   my @results = $client->search(simple => [
-    'core.type' => 'CPAN-Metabase-Fact-TestFact'
+    'core.type' => 'Metabase-Fact-TestFact'
   ]);
 
   is(
     @results,
     2,
-    "we get two results for core.type = CPAN-Metabase-Fact-TestFact",
+    "we get two results for core.type = Metabase-Fact-TestFact",
   );
 }

@@ -30,7 +30,7 @@ my $config = {
       },
     },
     fact_classes => [
-      'CPAN::Metabase::User::Profile',
+      'Metabase::User::Profile',
       'CPAN::Testers::Report',
     ],
   }

@@ -1,6 +1,6 @@
 require 5.006;
 use inc::Module::Install;
-all_from('lib/CPAN/Metabase/Web.pm');
+all_from('lib/Metabase/Web.pm');
 
 requires('Metabase' => 0);
 
