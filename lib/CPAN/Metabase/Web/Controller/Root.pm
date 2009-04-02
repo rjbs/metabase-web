@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-package CPAN::Metabase::Web::Controller::Root;
+package Metabase::Web::Controller::Root;
 use base 'Catalyst::Controller::REST';
 
 our $VERSION = '0.001';

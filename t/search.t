@@ -29,7 +29,7 @@ my $client = Test::Metabase::Client->new({
 }
 
 {
-  my $fact = CPAN::Metabase::Fact::TestFact->new({
+  my $fact = Metabase::Fact::TestFact->new({
     resource    => 'RJBS/Foo-Bar-1.23.tar.gz',
     content     => 'this power powered by power',
     user_id     => 'rjbs',
@@ -40,7 +40,7 @@ my $client = Test::Metabase::Client->new({
 }
 
 {
-  my $fact = CPAN::Metabase::Fact::TestFact->new({
+  my $fact = Metabase::Fact::TestFact->new({
     resource    => 'RJBS/Bar-Baz-0.01.tar.gz',
     content     => 'heavens to murgatroid!',
     user_id     => 'rjbs',
@@ -56,7 +56,7 @@ my $client = Test::Metabase::Client->new({
   my $json = $res_2->content;
   my $struct = JSON->new->decode($json);
 
-  my $retr_fact  = CPAN::Metabase::Fact::TestFact->from_struct($struct);
+  my $retr_fact  = Metabase::Fact::TestFact->from_struct($struct);
 
   is($retr_fact->guid, $fact->guid, "we got the same guid-ed fact");
   is_deeply(

@@ -36,7 +36,7 @@ sub import {
           index   => { index_file => "$tmp{secret}{index}"   },
         },
       },
-      fact_classes => [ 'CPAN::Metabase::Fact::TestFact' ],
+      fact_classes => [ 'Metabase::Fact::TestFact' ],
     }
   };
 
@@ -46,7 +46,7 @@ sub import {
   print { $fh } JSON->new->encode($config);
   $ENV{CPAN_METABASE_WEB_CONFIG} = $config_file;
 
-  $CPAN::Metabase::Web::Model::Metabase::COMPONENT_CALLBACK = sub {
+  $Metabase::Web::Model::Metabase::COMPONENT_CALLBACK = sub {
     $CURRENT_GATEWAY = shift;
   };
 

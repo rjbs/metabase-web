@@ -1,6 +1,6 @@
 use strict;
 use warnings;
-package CPAN::Metabase::Web::Model::Metabase;
+package Metabase::Web::Model::Metabase;
 use base 'Catalyst::Model';
 
 use Catalyst::Utils;
@@ -8,16 +8,16 @@ use Params::Util qw(_CLASS);
 
 my $default_config = {
   gateway   => {
-    CLASS => 'CPAN::Metabase::Gateway',
+    CLASS => 'Metabase::Gateway',
     librarian => {
-      CLASS => 'CPAN::Metabase::Librarian',
-      archive => { CLASS => 'CPAN::Metabase::Archive::Filesystem' },
-      index   => { CLASS => 'CPAN::Metabase::Index::FlatFile'     },
+      CLASS => 'Metabase::Librarian',
+      archive => { CLASS => 'Metabase::Archive::Filesystem' },
+      index   => { CLASS => 'Metabase::Index::FlatFile'     },
     },
     secret_librarian => {
-      CLASS   => 'CPAN::Metabase::Librarian',
-      archive => { CLASS => 'CPAN::Metabase::Archive::Filesystem' },
-      index   => { CLASS => 'CPAN::Metabase::Index::FlatFile'     },
+      CLASS   => 'Metabase::Librarian',
+      archive => { CLASS => 'Metabase::Archive::Filesystem' },
+      index   => { CLASS => 'Metabase::Index::FlatFile'     },
     },
   },
 };

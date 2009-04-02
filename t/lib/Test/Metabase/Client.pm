@@ -1,9 +1,9 @@
 use strict;
 use warnings;
 package Test::Metabase::Client;
-use base 'CPAN::Metabase::Client::Simple';
+use base 'Metabase::Client::Simple';
 
-use Catalyst::Test 'CPAN::Metabase::Web';
+use Catalyst::Test 'Metabase::Web';
 
 our $VERSION = '0.001';
 

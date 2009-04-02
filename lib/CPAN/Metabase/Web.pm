@@ -1,4 +1,4 @@
-package CPAN::Metabase::Web;
+package Metabase::Web;
 use strict;
 use warnings;
 
