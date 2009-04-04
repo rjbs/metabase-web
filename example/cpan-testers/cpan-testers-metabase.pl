@@ -14,6 +14,7 @@ use Pod::Usage;
 use Path::Class;
 use FindBin;
 use lib "$FindBin::Bin/../lib";
+use lib "lib";
 
 
 my $debug             = 0;
