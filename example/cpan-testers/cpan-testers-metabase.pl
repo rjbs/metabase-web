@@ -13,8 +13,7 @@ use Getopt::Long;
 use Pod::Usage;
 use Path::Class;
 use FindBin;
-use lib "$FindBin::Bin/../lib";
-use lib "lib";
+use lib "$FindBin::Bin/../../lib";
 
 
 my $debug             = 0;
