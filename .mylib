@@ -1,0 +1,4 @@
+../metabase/lib
+../metabase-fact/lib
+../metabase-client-simple/lib
+../cpan-testers-report/lib
