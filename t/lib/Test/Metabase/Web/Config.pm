@@ -36,7 +36,7 @@ sub import {
           index   => { index_file => "$tmp{secret}{index}"   },
         },
       },
-      fact_classes => [ 'Metabase::Fact::TestFact' ],
+      fact_classes => [ 'Test::Metabase::StringFact' ],
     }
   };
 

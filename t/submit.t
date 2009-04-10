@@ -26,7 +26,7 @@ use Metabase::User::Profile;
 
   Test::Metabase::Web::Config->gateway->secret_librarian->store($ok_profile);
 
-  my $fact = Metabase::Fact::TestFact->new({
+  my $fact = Test::Metabase::StringFact->new({
     resource => 'RJBS/Foo-Bar-1.23.tar.gz',
     content  => 'this power powered by power',
   });
@@ -36,7 +36,7 @@ use Metabase::User::Profile;
 
   my $fact_struct = $ok_client->retrieve_fact_raw($fact->guid);
 
-  my $retr_fact  = Metabase::Fact::TestFact->from_struct($fact_struct);
+  my $retr_fact  = Test::Metabase::StringFact->from_struct($fact_struct);
 
   is($retr_fact->guid, $fact->guid, "we got the same guid-ed fact");
   is_deeply(
@@ -63,7 +63,7 @@ use Metabase::User::Profile;
 
   my $bad_client = Test::Metabase::Client->new({ profile => $bad_profile });
 
-  my $fact = Metabase::Fact::TestFact->new({
+  my $fact = Test::Metabase::StringFact->new({
     resource => 'RJBS/Foo-Bar-1.23.tar.gz',
     content  => 'this power powered by power',
   });
@@ -71,7 +71,7 @@ use Metabase::User::Profile;
   my $ok    = eval { $bad_client->submit_fact($fact); 1 };
   my $error = $@;
   ok(! $ok, "resource rejected!");
-  like($error, qr/unknown submitter/, "rejected for the right reasons");
+  like($error, qr/unknown submitter/m, "rejected for the right reasons");
 }
 
 {
@@ -89,7 +89,7 @@ use Metabase::User::Profile;
 
   my $bad_client = Test::Metabase::Client->new({ profile => $bad_pw });
 
-  my $fact = Metabase::Fact::TestFact->new({
+  my $fact = Test::Metabase::StringFact->new({
     resource => 'RJBS/Foo-Bar-1.23.tar.gz',
     content  => 'this power powered by power',
   });
@@ -97,5 +97,5 @@ use Metabase::User::Profile;
   my $ok    = eval { $bad_client->submit_fact($fact); 1 };
   my $error = $@;
   ok(! $ok, "resource rejected!");
-  like($error, qr/unknown submitter/, "rejected for the right reasons");
+  like($error, qr/submitter could not be authenticated/, "rejected for the right reasons");
 }
