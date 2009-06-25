@@ -12,6 +12,7 @@ requires('Catalyst::Plugin::ConfigLoader' => 0);
 
 test_requires('Metabase::Client::Simple');
 
+auto_manifest
 tests_recursive;
 extra_tests;
 
