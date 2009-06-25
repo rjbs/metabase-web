@@ -9,16 +9,16 @@ use Test::Metabase::Client;
 
 use Metabase::User::Profile;
 
+my $ok_profile;
+my $ok_secret = 'aixuZuo8';
+
 {
   # We use this guy for submitting.
-  my $ok_profile = Metabase::User::Profile->open({
-    resource => 'metabase:user:74B9A2EA-1D1A-11DE-BE21-DD62421C7A0A',
-    guid     => '74B9A2EA-1D1A-11DE-BE21-DD62421C7A0A',
+  $ok_profile = Metabase::User::Profile->create({
+    email_address => 'jdoe@example.com',
+    full_name     => 'John Doe',
+    secret        => $ok_secret,
   });
-
-  $ok_profile->add('Metabase::User::EmailAddress' => 'jdoe@example.com');
-  $ok_profile->add('Metabase::User::FullName'     => 'John Doe');
-  $ok_profile->add('Metabase::User::Secret'       => 'aixuZuo8');
 
   $ok_profile->close;
 
@@ -50,14 +50,13 @@ use Metabase::User::Profile;
 
 {
   # We use this guy for failing to submit.  He is not stored in the s_l.
-  my $bad_profile = Metabase::User::Profile->open({
-    resource => 'metabase:user:499DE666-1D7E-11DE-84B6-1B03411C7A0A',
-    guid     => '499DE666-1D7E-11DE-84B6-1B03411C7A0A',
+  my $bad_profile = Metabase::User::Profile->create({
+    # resource => 'metabase:user:499DE666-1D7E-11DE-84B6-1B03411C7A0A',
+    # guid     => '499DE666-1D7E-11DE-84B6-1B03411C7A0A',
+    email_address => 'gorp@example.com',
+    full_name     => 'Gorp Zug',
+    secret        => 'stroguuu',
   });
-
-  $bad_profile->add('Metabase::User::EmailAddress' => 'gorp@example.com');
-  $bad_profile->add('Metabase::User::FullName'     => 'Gorp Zug');
-  $bad_profile->add('Metabase::User::Secret'       => 'stroguuu');
 
   $bad_profile->close;
 
@@ -76,14 +75,9 @@ use Metabase::User::Profile;
 
 {
   # We use this guy for failing to submit.  He is in MB, but secret is wrong.
-  my $bad_pw = Metabase::User::Profile->open({
-    resource => 'metabase:user:74B9A2EA-1D1A-11DE-BE21-DD62421C7A0A',
-    guid     => '74B9A2EA-1D1A-11DE-BE21-DD62421C7A0A',
-  });
-
-  $bad_pw->add('Metabase::User::EmailAddress' => 'jdoe@example.com');
-  $bad_pw->add('Metabase::User::FullName'     => 'John Doe');
-  $bad_pw->add('Metabase::User::Secret'       => 'toriamos');
+  my $ok_struct = $ok_profile->as_struct;
+  $ok_struct->{content} =~ s/\Q$ok_secret/bad-secret/;
+  my $bad_pw = Metabase::User::Profile->from_struct($ok_struct);
 
   $bad_pw->close;
 
