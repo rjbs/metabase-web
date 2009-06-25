@@ -4,7 +4,7 @@ package Metabase::Web::Controller::Root;
 use base 'Catalyst::Controller::REST';
 
 our $VERSION = '0.001';
-$VERSION = eval $VERSION; # convert '1.23_45' to 1.2345
+$VERSION = eval $VERSION;
 
 use Data::GUID;
 
