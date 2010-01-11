@@ -7,6 +7,7 @@ requires('Metabase' => 0);
 requires('Catalyst::Runtime' => 5.80);
 requires('Catalyst::Plugin::ConfigLoader' => 0);
 requires('Catalyst::Controller::REST' => 0);
+requires('CPAN::Testers::Report' => 0);
 requires('Data::GUID'        => 0);
 requires('JSON'              => 2);
 
