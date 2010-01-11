@@ -1,12 +1,15 @@
-use strict;
-use warnings;
 package Metabase::Web::Controller::Root;
-use base 'Catalyst::Controller::REST';
+use Moose;
+use namespace::autoclean;
+
+BEGIN { extends 'Catalyst::Controller::REST' }
+
+use Data::GUID;
+
+__PACKAGE__->config(namespace => '');
 
 our $VERSION = '0.001';
 $VERSION = eval $VERSION; # convert '1.23_45' to 1.2345
-
-use Data::GUID;
 
 # /submit/Test-Report/dist/RJBS/Acme-ProgressBar-1.124.tar.gz/
 #  submit 0           dist 0    1
@@ -65,7 +68,7 @@ sub guid_GET {
 
   return $self->status_not_found($c, message => 'no such resource')
     unless my $fact = $c->model('Metabase')->librarian->extract($guid);
-  
+
   return $self->status_ok(
     $c,
     entity => $fact->as_struct,
@@ -89,5 +92,7 @@ sub simple_GET {
     entity => $data,
   );
 }
+
+__PACKAGE__->meta->make_immutable;
 
 1;
