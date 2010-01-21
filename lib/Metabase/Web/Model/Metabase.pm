@@ -3,8 +3,43 @@ use warnings;
 package Metabase::Web::Model::Metabase;
 use base 'Catalyst::Model';
 
+our $VERSION = '0.001';
+$VERSION = eval $VERSION;
+
 use Catalyst::Utils;
 use Params::Util qw(_CLASS);
+
+=head1 NAME
+
+Metabase::Web::Model::Metabase - the Metabase::Web's model for the Metabase
+
+=head1 DESCRIPTION
+
+This model sets up a gateway, complete with librarians and archivers, and
+provides easy access to them.  Most of the logic that Metabase::Web will rely
+in for retrieving or adding facts is either in
+L<Metabase::Web::Controller::Root|Metabase::Web::Controller::Root> or the
+Gateway and Librarian classes.
+
+=head1 CONFIGURATION
+
+Configuration can be used to configure the librarians (public and secret), the
+gateway, and the archives and indices.  Valid configuration may look like:
+
+  gateway:
+    CLASS: the gateway class (defaults to Metabase::Gateway)
+    librarian:
+      CLASS: the librarian class (defaults to Metabase::Librarian)
+      archive:
+        CLASS: the archive class (defaults to Metabase::Archive::Filesystem)
+      index:
+        CLASS: the index class (defaults to Metabase::Index::FlatFile)
+    secret_librarian: (same structure as librarian)
+  fact_classes: [ arrayref of allowed Fact classes ]
+
+(This section will be expanded in the future.)
+
+=cut
 
 my $default_config = {
   gateway   => {
@@ -93,7 +128,47 @@ sub COMPONENT {
   return $self;
 }
 
+=head1 METHODS
+
+=head2 gateway
+
+This method returns the metabase's gateway.
+
+=head2 librarian
+
+This method returns the metabase's public librarian.
+
+=cut
+
 sub gateway   { $_[0]->{gateway} }
 sub librarian { $_[0]->gateway->librarian }
+
+=head1 AUTHOR
+
+=over 
+
+=item * David A. Golden (DAGOLDEN)
+
+=item * Ricardo J. B. Signes (RJBS)
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
+
+  Portions copyright (c) 2008-2009 by David A. Golden
+  Portions copyright (c) 2008-2009 by Ricardo J. B. Signes
+
+Licensed under the same terms as Perl itself (the "License").
+You may not use this file except in compliance with the License.
+A copy of the License was distributed with this file or you may obtain a
+copy of the License from http://dev.perl.org/licenses/
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+=cut
 
 1;
