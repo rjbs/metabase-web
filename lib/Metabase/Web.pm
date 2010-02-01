@@ -1,14 +1,19 @@
-use strict;
-use warnings;
 package Metabase::Web;
+
+use Moose;
+use namespace::autoclean;
+
+use Catalyst::Runtime 5.80;
+use Catalyst qw/ConfigLoader/;
 
 our $VERSION = '0.001';
 $VERSION = eval $VERSION;
 
-use Catalyst::Runtime '5.800000';
-use Catalyst qw/ConfigLoader/;
+__PACKAGE__->config(
+    name => __PACKAGE__,
+    disable_component_resolution_regex_fallback => 1,
+);
 
-__PACKAGE__->config(name => __PACKAGE__);
 __PACKAGE__->setup;
 
 =head1 NAME
