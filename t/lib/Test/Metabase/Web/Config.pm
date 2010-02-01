@@ -37,7 +37,7 @@ sub import {
         },
       },
       fact_classes => [ 'Test::Metabase::StringFact' ],
-    }
+    },
   };
 
   my $config_file = dir($root)->file('test.json');

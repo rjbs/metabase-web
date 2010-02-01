@@ -38,7 +38,7 @@ sub submit_POST {
   my $submitter_struct = $struct->{submitter};
 
   Carp::confess("URL and POST types do not match")
-    unless $c->stash->{type} eq $fact_struct->{metadata}{core}{type}[1];
+    unless $c->stash->{type} eq $fact_struct->{metadata}{core}{type};
 
   # XXX: In the future, this might be a queue id.  That might be a guid.  Time
   # will tell! -- rjbs, 2008-04-08

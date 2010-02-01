@@ -4,6 +4,7 @@ package Test::Metabase::Client;
 use base 'Metabase::Client::Simple';
 
 use Catalyst::Test 'Metabase::Web';
+BEGIN { Metabase::Web->log->levels('fatal') } # disable logging
 
 our $VERSION = '0.001';
 

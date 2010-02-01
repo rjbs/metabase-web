@@ -8,26 +8,33 @@ use Test::Metabase::Web::Config;
 use Test::Metabase::Client;
 
 use Metabase::User::Profile;
+use Metabase::User::Secret;
 
 my $ok_profile;
-my $ok_secret = 'aixuZuo8';
+my $ok_secret;
+my $ok_password = 'aixuZuo8';
 
 {
   # We use this guy for submitting.
   $ok_profile = Metabase::User::Profile->create({
     email_address => 'jdoe@example.com',
     full_name     => 'John Doe',
-    secret        => $ok_secret,
-  });
+  }) or die "Couldn't create test profile";
 
   $ok_profile->close;
 
-  my $ok_client = Test::Metabase::Client->new({ profile => $ok_profile });
+  $ok_secret = Metabase::User::Secret->new(
+    resource => $ok_profile->resource,
+    content => $ok_password,
+  ) or die "Couldn't create test secret";
 
-  Test::Metabase::Web::Config->gateway->secret_librarian->store($ok_profile);
+  my $ok_client = Test::Metabase::Client->new({ profile => $ok_profile, secret => $ok_secret });
+
+  Test::Metabase::Web::Config->gateway->librarian->store($ok_profile);
+  Test::Metabase::Web::Config->gateway->secret_librarian->store($ok_secret);
 
   my $fact = Test::Metabase::StringFact->new({
-    resource => 'RJBS/Foo-Bar-1.23.tar.gz',
+    resource => 'cpan:///distfile/RJBS/Foo-Bar-1.23.tar.gz',
     content  => 'this power powered by power',
   });
 
@@ -55,19 +62,23 @@ my $ok_secret = 'aixuZuo8';
     # guid     => '499DE666-1D7E-11DE-84B6-1B03411C7A0A',
     email_address => 'gorp@example.com',
     full_name     => 'Gorp Zug',
-    secret        => 'stroguuu',
   });
+
+  my $bad_secret = Metabase::User::Secret->new(
+    resource => $bad_profile->resource,
+    content => 'dafdadfa'
+  );
 
   $bad_profile->close;
 
-  my $bad_client = Test::Metabase::Client->new({ profile => $bad_profile });
+  my $bad_client = Test::Metabase::Client->new({ profile => $bad_profile, secret => $bad_secret });
 
   my $fact = Test::Metabase::StringFact->new({
-    resource => 'RJBS/Foo-Bar-1.23.tar.gz',
+    resource => 'cpan:///distfile/RJBS/Foo-Bar-1.23.tar.gz',
     content  => 'this power powered by power',
   });
 
-  my $ok    = eval { $bad_client->submit_fact($fact); 1 };
+  my $ok     = eval { $bad_client->submit_fact($fact); 1 };
   my $error = $@;
   ok(! $ok, "resource rejected!");
   like($error, qr/unknown submitter/m, "rejected for the right reasons");
@@ -75,16 +86,14 @@ my $ok_secret = 'aixuZuo8';
 
 {
   # We use this guy for failing to submit.  He is in MB, but secret is wrong.
-  my $ok_struct = $ok_profile->as_struct;
-  $ok_struct->{content} =~ s/\Q$ok_secret/bad-secret/;
-  my $bad_pw = Metabase::User::Profile->from_struct($ok_struct);
+  my $ok_struct = $ok_secret->as_struct;
+  $ok_struct->{content} =~ s/\Q$ok_password/bad-secret/;
+  my $bad_pw = Metabase::User::Secret->from_struct($ok_struct);
 
-  $bad_pw->close;
-
-  my $bad_client = Test::Metabase::Client->new({ profile => $bad_pw });
+  my $bad_client = Test::Metabase::Client->new({ profile => $ok_profile, secret => $bad_pw });
 
   my $fact = Test::Metabase::StringFact->new({
-    resource => 'RJBS/Foo-Bar-1.23.tar.gz',
+    resource => 'cpan:///distfile/RJBS/Foo-Bar-1.23.tar.gz',
     content  => 'this power powered by power',
   });
 
