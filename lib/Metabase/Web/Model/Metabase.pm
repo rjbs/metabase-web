@@ -3,7 +3,7 @@ use warnings;
 package Metabase::Web::Model::Metabase;
 use base 'Catalyst::Model';
 
-our $VERSION = '0.001';
+our $VERSION = '0.002';
 $VERSION = eval $VERSION;
 
 use Catalyst::Utils;

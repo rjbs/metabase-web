@@ -8,8 +8,8 @@ use Data::GUID;
 
 __PACKAGE__->config(namespace => '');
 
-our $VERSION = '0.001';
-$VERSION = eval $VERSION; # convert '1.23_45' to 1.2345
+our $VERSION = '0.002';
+$VERSION = eval $VERSION;
 
 # /submit/Test-Report/dist/RJBS/Acme-ProgressBar-1.124.tar.gz/
 #  submit 0           dist 0    1
