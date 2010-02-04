@@ -30,7 +30,7 @@ my $client = Test::Metabase::Client->new({
 
 {
   my $fact = Test::Metabase::StringFact->new({
-    resource    => 'RJBS/Foo-Bar-1.23.tar.gz',
+    resource    => 'cpan:///distfile/RJBS/Foo-Bar-1.23.tar.gz',
     content     => 'this power powered by power',
     user_id     => 'rjbs',
   });
@@ -41,7 +41,7 @@ my $client = Test::Metabase::Client->new({
 
 {
   my $fact = Test::Metabase::StringFact->new({
-    resource    => 'RJBS/Bar-Baz-0.01.tar.gz',
+    resource    => 'cpan:///distfile/RJBS/Bar-Baz-0.01.tar.gz',
     content     => 'heavens to murgatroid!',
     user_id     => 'rjbs',
   });
