@@ -52,7 +52,7 @@ my $ok_password = 'aixuZuo8';
     "content is identical, too",
   );
 
-  is($retr_fact->creator_id, $ok_profile->guid, 'fact has correct creator');
+  is($retr_fact->creator, $ok_profile->guid, 'fact has correct creator');
 }
 
 {
