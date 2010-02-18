@@ -19,7 +19,7 @@ use lib "$FindBin::Bin/../../lib";
 my $debug             = 0;
 my $fork              = 0;
 my $help              = 0;
-my $host              = undef;
+my $host              = "127.0.0.1";
 my $port              = $ENV{MYAPP_PORT} || $ENV{CATALYST_PORT} || 3000;
 my $keepalive         = 0;
 my $restart           = $ENV{MYAPP_RELOAD} || $ENV{CATALYST_RELOAD} || 0;

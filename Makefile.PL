@@ -10,6 +10,7 @@ requires('Catalyst::Controller::REST' => 0);
 requires('CPAN::Testers::Report' => 0);
 requires('Data::GUID'        => 0);
 requires('JSON'              => 2);
+requires('FCGI::ProcManager' => 0);
 
 test_requires('Metabase::Client::Simple');
 
