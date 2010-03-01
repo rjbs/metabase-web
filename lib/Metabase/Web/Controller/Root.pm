@@ -76,22 +76,22 @@ sub guid_GET {
 }
 
 # /search/.....
-sub search : Chained('/') CaptureArgs(0) {
-}
-
-sub simple : Chained('search') ActionClass('REST') {
-}
-
-sub simple_GET {
-  my ($self, $c, @args) = @_;
-
-  my $data = $c->model('Metabase')->librarian->search(@args);
-
-  return $self->status_ok(
-    $c,
-    entity => $data,
-  );
-}
+#sub search : Chained('/') CaptureArgs(0) {
+#}
+#
+#sub simple : Chained('search') ActionClass('REST') {
+#}
+#
+#sub simple_GET {
+#  my ($self, $c, @args) = @_;
+#
+#  my $data = $c->model('Metabase')->librarian->search(@args);
+#
+#  return $self->status_ok(
+#    $c,
+#    entity => $data,
+#  );
+#}
 
 __PACKAGE__->meta->make_immutable;
 
