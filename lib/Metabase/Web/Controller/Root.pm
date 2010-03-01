@@ -22,35 +22,38 @@ sub submit : Chained('/') Args(1) ActionClass('REST') {
 sub submit_POST {
   my ($self, $c) = @_;
 
-  my $struct = $c->req->data;
-  my $fact_struct = $struct->{fact};
-  my $submitter_struct = $struct->{submitter};
+  my $fact_struct = $c->req->data;
+  unless ($c->stash->{type} eq $fact_struct->{metadata}{core}{type} ) {
+    return $self->status_bad_request(
+      $c,
+      "URL and POST data types do not match"
+    );
+  }
 
-  Carp::confess("URL and POST types do not match")
-    unless $c->stash->{type} eq $fact_struct->{metadata}{core}{type};
+  my ($user_guid, $user_secret) = $c->req->authorization_basic;
 
   # XXX: In the future, this might be a queue id.  That might be a guid.  Time
   # will tell! -- rjbs, 2008-04-08
   my $guid = eval {
-    $c->model('Metabase')->gateway->handle_submission($struct);
+    $c->model('Metabase')->gateway->handle_submission(
+      $fact_struct, $user_guid, $user_secret
+    );
   };
 
-  unless ($guid) {
-    my $error = $@ || '(unknown error)';
-    $c->log->error("gateway rejected fact: $error");
-    my ($reason) = $error =~ /^reason: (.+)/;
-    $reason ||= 'internal gateway error';
-    return $self->status_bad_request($c, message => $reason);
+  if ( $guid ) {
+    return $self->status_created(
+      $c,
+      location => $c->url_for("/guid/$guid"), 
+      entity   => { guid => $guid },
+    );
+  }
+  else {
+    return $self->_gateway_error($@)
   }
 
-  return $self->status_created(
-    $c,
-    location => '/guid/' . $guid, # XXX: uri_for or something?
-    entity   => { guid => $guid },
-  );
 }
 
-# /guid/CC3F4AF4-0571-11DD-AA50-85A198B5225E
+# /guid/cc3f4af4-0571-11dd-aa50-85a198b5225e
 #  guid 0
 sub guid : Chained('/') Args(1) ActionClass('REST') {
   my ($self, $c, $guid) = @_;
@@ -73,6 +76,68 @@ sub guid_GET {
     $c,
     entity => $fact->as_struct,
   );
+}
+
+# HEAD is just an "exists" check
+sub guid_HEAD {
+  my ($self, $c) = @_;
+
+  return $self->status_bad_request($c, message => "invalid guid")
+    unless my $guid = $c->stash->{guid};
+
+  return $self->status_not_found($c, message => 'no such resource')
+    unless my $fact = $c->model('Metabase')->librarian->exists($guid);
+
+  return $self->status_ok( $c );
+}
+
+# /register
+#  
+sub register : Chained('/') Args(0) ActionClass('REST') { } 
+
+sub register_POST {
+  my ($self, $c) = @_;
+  my $list = $c->req->data;
+  
+  unless ( 
+    $list && ref $list eq 'ARRAY' 
+    && $list->[0]->{metadata}{core}{type} eq 'Metabase-User-Profile'
+    && $list->[1]->{metadata}{core}{type} eq 'Metabase-User-Secret'
+  ) {
+    return $self->status_bad_request(
+      $c,
+      "invalid registration data"
+    );
+  }
+
+  my $guid = eval {
+    $c->model('Metabase')->gateway->handle_registration( @$list )
+  };
+
+  if ( $guid ) {
+    return $self->status_created(
+      $c,
+      location => $c->url_for("/guid/$guid"), 
+      entity   => { guid => $guid },
+    );
+  }
+  else {
+    return $self->_gateway_error($@)
+  }
+
+}
+
+sub _gateway_error {
+  my ($self, $c, $error) = @_;
+  chomp $error;
+  $error = '500: unknown error' unless defined $error;
+  $c->log->error("gateway rejected fact: $error");
+  my ($code, $reason) = $error =~ /^([^:]+): (.+)/;
+  $code   ||= 500;
+  $reason ||= 'internal gateway error';
+  $c->response->status($code);
+  $c->stash->{rest} = { error => $reason };
+  return;
 }
 
 # /search/.....
@@ -107,8 +172,8 @@ __PACKAGE__->meta->make_immutable;
 
 =head1 COPYRIGHT AND LICENSE
 
-  Portions copyright (c) 2008-2009 by David A. Golden
-  Portions copyright (c) 2008-2009 by Ricardo J. B. Signes
+  Portions Copyright (c) 2008-2010 by David A. Golden
+  Portions Copyright (c) 2008-2009 by Ricardo J. B. Signes
 
 Licensed under the same terms as Perl itself (the "License").
 You may not use this file except in compliance with the License.
