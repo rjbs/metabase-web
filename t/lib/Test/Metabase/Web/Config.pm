@@ -11,6 +11,7 @@ my $CURRENT_GATEWAY;
 sub gateway { $CURRENT_GATEWAY }
 
 sub import {
+  my ($class, %opts) = @_;
   my %tmp;
   my $root = dir(File::Temp::tempdir(CLEANUP => 1));
 
@@ -35,6 +36,8 @@ sub import {
           archive => { root_dir   => "$tmp{secret}{archive}" },
           index   => { index_file => "$tmp{secret}{index}"   },
         },
+        allow_registration => 0,
+        %opts,
       },
       fact_classes => [ 'Test::Metabase::StringFact' ],
     },

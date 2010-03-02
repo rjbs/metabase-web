@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use lib 't/lib';
 
-use Test::More 'no_plan';
+use Test::More;
 use Test::Metabase::Web::Config;
 use Test::Metabase::Client;
 
@@ -30,8 +30,15 @@ my $ok_password = 'aixuZuo8';
 
   my $ok_client = Test::Metabase::Client->new({ profile => $ok_profile, secret => $ok_secret });
 
-  Test::Metabase::Web::Config->gateway->librarian->store($ok_profile);
-  Test::Metabase::Web::Config->gateway->secret_librarian->store($ok_secret);
+  ok( Test::Metabase::Web::Config->gateway->librarian->store($ok_profile), "register profile" );
+  ok( Test::Metabase::Web::Config->gateway->librarian->extract($ok_profile->guid), "test retrieve profile" );
+  ok( Test::Metabase::Web::Config->gateway->secret_librarian->store($ok_secret), "register secret" );
+  ok( Test::Metabase::Web::Config->gateway->secret_librarian->extract($ok_secret->guid), "test retrieve secret" );
+  my $found = Test::Metabase::Web::Config->gateway->secret_librarian->search(
+    'core.type' => 'Metabase-User-Secret',
+    'core.resource' => $ok_profile->resource->resource,
+  );
+  ok( scalar @$found, "search finds secret" );
 
   my $fact = Test::Metabase::StringFact->new({
     resource => 'cpan:///distfile/RJBS/Foo-Bar-1.23.tar.gz',
@@ -43,9 +50,11 @@ my $ok_password = 'aixuZuo8';
 
   my $fact_struct = $ok_client->retrieve_fact_raw($fact->guid);
 
+  ok( $fact_struct, "got a fact struct back" );
+
   my $retr_fact  = Test::Metabase::StringFact->from_struct($fact_struct);
 
-  is($retr_fact->guid, $fact->guid, "we got the same guid-ed fact");
+  is($retr_fact->guid, $fact->guid, "we got the same fact guid back");
   is_deeply(
     $retr_fact->content,
     $fact->content,
@@ -56,7 +65,8 @@ my $ok_password = 'aixuZuo8';
 }
 
 {
-  # We use this guy for failing to submit.  He is not stored in the s_l.
+  # We use this guy for failing to submit.  He is not stored in the s_l
+  # and new registrations are disabled in the test Metabase Gateway
   my $bad_profile = Metabase::User::Profile->create({
     # resource => 'metabase:user:499DE666-1D7E-11DE-84B6-1B03411C7A0A',
     # guid     => '499DE666-1D7E-11DE-84B6-1B03411C7A0A',
@@ -81,7 +91,7 @@ my $ok_password = 'aixuZuo8';
   my $ok     = eval { $bad_client->submit_fact($fact); 1 };
   my $error = $@;
   ok(! $ok, "resource rejected!");
-  like($error, qr/unknown submitter/m, "rejected for the right reasons");
+  like($error, qr/registration disabled/m, "rejected for the right reasons");
 }
 
 {
@@ -100,5 +110,8 @@ my $ok_password = 'aixuZuo8';
   my $ok    = eval { $bad_client->submit_fact($fact); 1 };
   my $error = $@;
   ok(! $ok, "resource rejected!");
-  like($error, qr/submitter could not be authenticated/, "rejected for the right reasons");
+  like($error, qr/user authentication failed/, "rejected for the right reasons");
 }
+
+done_testing;
+

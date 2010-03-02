@@ -30,7 +30,7 @@ sub submit_POST {
     );
   }
 
-  my ($user_guid, $user_secret) = $c->req->authorization_basic;
+  my ($user_guid, $user_secret) = $c->req->headers->authorization_basic;
 
   # XXX: In the future, this might be a queue id.  That might be a guid.  Time
   # will tell! -- rjbs, 2008-04-08
@@ -43,12 +43,12 @@ sub submit_POST {
   if ( $guid ) {
     return $self->status_created(
       $c,
-      location => $c->url_for("/guid/$guid"), 
+      location => "/guid/$guid", 
       entity   => { guid => $guid },
     );
   }
   else {
-    return $self->_gateway_error($@)
+    return $self->_gateway_error($c, $@)
   }
 
 }
@@ -74,7 +74,9 @@ sub guid_GET {
 
   return $self->status_ok(
     $c,
-    entity => $fact->as_struct,
+    entity => {
+      fact => $fact->as_struct
+    },
   );
 }
 
@@ -88,7 +90,10 @@ sub guid_HEAD {
   return $self->status_not_found($c, message => 'no such resource')
     unless my $fact = $c->model('Metabase')->librarian->exists($guid);
 
-  return $self->status_ok( $c );
+  return $self->status_ok( 
+    $c,
+    entity => { guid => $guid },
+  );
 }
 
 # /register
@@ -117,22 +122,26 @@ sub register_POST {
   if ( $guid ) {
     return $self->status_created(
       $c,
-      location => $c->url_for("/guid/$guid"), 
+      location => "/guid/$guid", 
       entity   => { guid => $guid },
     );
   }
   else {
-    return $self->_gateway_error($@)
+    return $self->_gateway_error($c, $@)
   }
 
 }
 
 sub _gateway_error {
   my ($self, $c, $error) = @_;
-  chomp $error;
-  $error = '500: unknown error' unless defined $error;
+  if ( defined $error ) {
+    chomp $error;
+  }
+  else {
+    $error = '500: unknown error';
+  }
   $c->log->error("gateway rejected fact: $error");
-  my ($code, $reason) = $error =~ /^([^:]+): (.+)/;
+  my ($code, $reason) = $error =~ /\A([^:]+): (.+)/ms;
   $code   ||= 500;
   $reason ||= 'internal gateway error';
   $c->response->status($code);
