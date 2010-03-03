@@ -20,7 +20,7 @@ my $config = {
       CLASS => 'Metabase::Gateway',
       autocreate_profile => 1,
       disable_security => 1,  
-      librarian => {
+      public_librarian => {
 	CLASS => 'Metabase::Librarian',
 	archive => { 
 	  CLASS => 'Metabase::Archive::S3',
@@ -37,7 +37,7 @@ my $config = {
 	  domain     => 'cpantesters.dev.metabase',
 	},
       },
-      secret_librarian => {
+      private_librarian => {
 	CLASS   => 'Metabase::Librarian',
 	archive => { 
 	  CLASS => 'Metabase::Archive::S3',

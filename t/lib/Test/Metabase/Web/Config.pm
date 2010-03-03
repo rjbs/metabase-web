@@ -28,11 +28,11 @@ sub import {
   my $config = {
     'Model::Metabase' => {
       gateway => {
-        librarian => {
+        public_librarian => {
           archive => { root_dir   => "$tmp{public}{archive}" },
           index   => { index_file => "$tmp{public}{index}"   },
         },
-        secret_librarian => {
+        private_librarian => {
           archive => { root_dir   => "$tmp{secret}{archive}" },
           index   => { index_file => "$tmp{secret}{index}"   },
         },

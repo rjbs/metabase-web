@@ -44,12 +44,12 @@ gateway, and the archives and indices.  Valid configuration may look like:
 my $default_config = {
   gateway   => {
     CLASS => 'Metabase::Gateway',
-    librarian => {
+    public_librarian => {
       CLASS => 'Metabase::Librarian',
       archive => { CLASS => 'Metabase::Archive::Filesystem' },
       index   => { CLASS => 'Metabase::Index::FlatFile'     },
     },
-    secret_librarian => {
+    private_librarian => {
       CLASS   => 'Metabase::Librarian',
       archive => { CLASS => 'Metabase::Archive::Filesystem' },
       index   => { CLASS => 'Metabase::Index::FlatFile'     },
@@ -86,7 +86,7 @@ sub COMPONENT {
 
   my %librarian;
 
-  for my $which (qw(librarian secret_librarian)) {
+  for my $which (qw(public_librarian private_librarian)) {
     my ($archive, $index);
     my $config = $config->{gateway}{$which};
 
@@ -141,7 +141,7 @@ This method returns the metabase's public librarian.
 =cut
 
 sub gateway   { $_[0]->{gateway} }
-sub librarian { $_[0]->gateway->librarian }
+sub librarian { $_[0]->gateway->public_librarian }
 
 =head1 AUTHOR
 

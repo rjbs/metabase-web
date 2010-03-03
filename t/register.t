@@ -40,8 +40,8 @@ my $ok_password = 'aixuZuo8';
 
   # Should have autoregistered during submission
 
-  ok( Test::Metabase::Web::Config->gateway->librarian->extract($ok_profile->guid), "retrieve registered profile" );
-  ok( Test::Metabase::Web::Config->gateway->secret_librarian->extract($ok_secret->guid), "retrieve registered secret" );
+  ok( Test::Metabase::Web::Config->gateway->public_librarian->extract($ok_profile->guid), "retrieve registered profile" );
+  ok( Test::Metabase::Web::Config->gateway->private_librarian->extract($ok_secret->guid), "retrieve registered secret" );
 
   my $fact_struct = $ok_client->retrieve_fact_raw($fact->guid);
   ok( $fact_struct, "got a fact struct back" );

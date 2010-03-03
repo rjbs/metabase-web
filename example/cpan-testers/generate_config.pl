@@ -19,11 +19,11 @@ my $config = {
   'Model::Metabase' => {
     gateway => {
       autocreate_profile => 1,
-      librarian => {
+      public_librarian => {
         archive => { root_dir   => "$public_archive" },
         index   => { index_file => "$public_index"   },
       },
-      secret_librarian => {
+      private_librarian => {
         archive => { root_dir   => "$secret_archive" },
         index   => { index_file => "$secret_index"   },
       },

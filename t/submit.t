@@ -30,11 +30,11 @@ my $ok_password = 'aixuZuo8';
 
   my $ok_client = Test::Metabase::Client->new({ profile => $ok_profile, secret => $ok_secret });
 
-  ok( Test::Metabase::Web::Config->gateway->librarian->store($ok_profile), "register profile" );
-  ok( Test::Metabase::Web::Config->gateway->librarian->extract($ok_profile->guid), "test retrieve profile" );
-  ok( Test::Metabase::Web::Config->gateway->secret_librarian->store($ok_secret), "register secret" );
-  ok( Test::Metabase::Web::Config->gateway->secret_librarian->extract($ok_secret->guid), "test retrieve secret" );
-  my $found = Test::Metabase::Web::Config->gateway->secret_librarian->search(
+  ok( Test::Metabase::Web::Config->gateway->public_librarian->store($ok_profile), "register profile" );
+  ok( Test::Metabase::Web::Config->gateway->public_librarian->extract($ok_profile->guid), "test retrieve profile" );
+  ok( Test::Metabase::Web::Config->gateway->private_librarian->store($ok_secret), "register secret" );
+  ok( Test::Metabase::Web::Config->gateway->private_librarian->extract($ok_secret->guid), "test retrieve secret" );
+  my $found = Test::Metabase::Web::Config->gateway->private_librarian->search(
     'core.type' => 'Metabase-User-Secret',
     'core.resource' => $ok_profile->resource->resource,
   );
