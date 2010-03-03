@@ -23,7 +23,8 @@ sub submit_POST {
   my ($self, $c) = @_;
 
   my $fact_struct = $c->req->data;
-  unless ($c->stash->{type} eq $fact_struct->{metadata}{core}{type} ) {
+  my ($type, $resource) = @{$fact_struct->{metadata}{core}}{qw/type resource/};
+  unless ($c->stash->{type} eq $type ) {
     return $self->status_bad_request(
       $c,
       "URL and POST data types do not match"
@@ -41,6 +42,7 @@ sub submit_POST {
   };
 
   if ( $guid ) {
+    $c->log->info("Accepted $type for $resource");
     return $self->status_created(
       $c,
       location => "/guid/$guid", 
