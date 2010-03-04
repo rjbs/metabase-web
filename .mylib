@@ -2,3 +2,4 @@
 ../metabase-fact/lib
 ../metabase-client-simple/lib
 ../cpan-testers-report/lib
+../cpan-testers-metabase/lib

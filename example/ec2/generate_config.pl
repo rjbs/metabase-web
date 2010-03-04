@@ -16,49 +16,7 @@ my $id = $aws_config->{_}{default};
 
 my $config = {
   'Model::Metabase' => {
-    gateway   => {
-      CLASS => 'Metabase::Gateway',
-      autocreate_profile => 1,
-      disable_security => 1,  
-      public_librarian => {
-	CLASS => 'Metabase::Librarian',
-	archive => { 
-	  CLASS => 'Metabase::Archive::S3',
-	  aws_access_key_id => $aws_config->{$id}{access_key},
-	  aws_secret_access_key => $aws_config->{$id}{secret_access_key},
-	  bucket     => 'cpantesters',
-	  prefix     => 'dev/metabase/',
-	  compressed => 1,
-	},
-	index   => { 
-	  CLASS => 'Metabase::Index::SimpleDB',
-	  aws_access_key_id => $aws_config->{$id}{access_key},
-	  aws_secret_access_key => $aws_config->{$id}{secret_access_key},
-	  domain     => 'cpantesters.dev.metabase',
-	},
-      },
-      private_librarian => {
-	CLASS   => 'Metabase::Librarian',
-	archive => { 
-	  CLASS => 'Metabase::Archive::S3',
-	  aws_access_key_id => $aws_config->{$id}{access_key},
-	  aws_secret_access_key => $aws_config->{$id}{secret_access_key},
-	  bucket     => 'cpantesters',
-	  prefix     => 'dev/secret/metabase/',
-	  compressed => 1,
-	},
-	index   => { 
-	  CLASS => 'Metabase::Index::SimpleDB',
-	  aws_access_key_id => $aws_config->{$id}{access_key},
-	  aws_secret_access_key => $aws_config->{$id}{secret_access_key},
-	  domain     => 'cpantesters.dev.secret.metabase',
-	},
-      },
-    },
-    fact_classes => [
-      'Metabase::User::Profile',
-      'CPAN::Testers::Report',
-    ],
+    class => 'CPAN::Testers::Metabase::AWS',
   }
 };
 
