@@ -36,7 +36,7 @@ sub submit_POST {
   # XXX: In the future, this might be a queue id.  That might be a guid.  Time
   # will tell! -- rjbs, 2008-04-08
   my $guid = eval {
-    $c->model('Metabase')->gateway->handle_submission(
+    $c->model('Metabase')->handle_submission(
       $fact_struct, $user_guid, $user_secret
     );
   };
@@ -72,7 +72,7 @@ sub guid_GET {
     unless my $guid = $c->stash->{guid};
 
   return $self->status_not_found($c, message => 'no such resource')
-    unless my $fact = $c->model('Metabase')->librarian->extract($guid);
+    unless my $fact = $c->model('Metabase')->public_librarian->extract($guid);
 
   return $self->status_ok(
     $c,
@@ -90,7 +90,7 @@ sub guid_HEAD {
     unless my $guid = $c->stash->{guid};
 
   return $self->status_not_found($c, message => 'no such resource')
-    unless my $fact = $c->model('Metabase')->librarian->exists($guid);
+    unless my $fact = $c->model('Metabase')->public_librarian->exists($guid);
 
   return $self->status_ok( 
     $c,
@@ -118,7 +118,7 @@ sub register_POST {
   }
 
   my $guid = eval {
-    $c->model('Metabase')->gateway->handle_registration( @$list )
+    $c->model('Metabase')->handle_registration( @$list )
   };
 
   if ( $guid ) {
@@ -145,7 +145,7 @@ sub _gateway_error {
   $c->log->error("gateway rejected fact: $error");
   my ($code, $reason) = $error =~ /\A([^:]+): (.+)/ms;
   $code   ||= 500;
-  $reason ||= 'internal gateway error';
+  $reason ||= 'internal ateway error';
   $c->response->status($code);
   $c->stash->{rest} = { error => $reason };
   return;
@@ -161,7 +161,7 @@ sub _gateway_error {
 #sub simple_GET {
 #  my ($self, $c, @args) = @_;
 #
-#  my $data = $c->model('Metabase')->librarian->search(@args);
+#  my $data = $c->model('Metabase')->public_liibrarian->search(@args);
 #
 #  return $self->status_ok(
 #    $c,

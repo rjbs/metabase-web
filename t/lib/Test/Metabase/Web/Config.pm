@@ -10,45 +10,28 @@ use JSON;
 my $CURRENT_GATEWAY;
 sub gateway { $CURRENT_GATEWAY }
 
+my $STORAGE_DIR;
+sub storage_dir { $STORAGE_DIR };
+
 sub import {
   my ($class, %opts) = @_;
   my %tmp;
-  my $root = dir(File::Temp::tempdir(CLEANUP => 1));
-
-  for my $which (qw(public secret)) {
-    my $root = $root->subdir($which);
-    (my $archive_dir = $root->subdir('store'))->mkpath;
-    my $index_file   = $root->file('index.txt');
-    close $index_file->openw; # create the file, lest the exists-check die!
-
-    $tmp{$which}{archive} = "$archive_dir";
-    $tmp{$which}{index}   = "$index_file";
-  }
+  $STORAGE_DIR = dir(File::Temp::tempdir(CLEANUP => 1));
 
   my $config = {
     'Model::Metabase' => {
-      gateway => {
-        public_librarian => {
-          archive => { root_dir   => "$tmp{public}{archive}" },
-          index   => { index_file => "$tmp{public}{index}"   },
-        },
-        private_librarian => {
-          archive => { root_dir   => "$tmp{secret}{archive}" },
-          index   => { index_file => "$tmp{secret}{index}"   },
-        },
-        allow_registration => 0,
-        %opts,
-      },
-      fact_classes => [ 'Test::Metabase::StringFact' ],
+      class => 'Test::Metabase::Gateway',
+      args => { data_dir => "$STORAGE_DIR", %opts },
     },
   };
 
-  my $config_file = dir($root)->file('test.json');
+  my $config_file = dir($STORAGE_DIR)->file('test.json');
 
   open my $fh, '>', $config_file or die "can't write to $config_file: $!";
   print { $fh } JSON->new->encode($config);
   $ENV{METABASE_WEB_CONFIG} = $config_file;
 
+  no warnings 'once';
   $Metabase::Web::Model::Metabase::COMPONENT_CALLBACK = sub {
     $CURRENT_GATEWAY = shift;
   };

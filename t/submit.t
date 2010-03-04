@@ -4,11 +4,14 @@ use warnings;
 use lib 't/lib';
 
 use Test::More;
-use Test::Metabase::Web::Config;
+use Test::Metabase::Web::Config (allow_registration => 0);
 use Test::Metabase::Client;
+use Test::Metabase::StringFact;
 
 use Metabase::User::Profile;
 use Metabase::User::Secret;
+
+diag "Test metabase located at " . Test::Metabase::Web::Config->storage_dir;
 
 my $ok_profile;
 my $ok_secret;
