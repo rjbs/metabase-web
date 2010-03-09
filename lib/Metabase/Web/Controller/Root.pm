@@ -8,7 +8,7 @@ use Data::GUID;
 
 __PACKAGE__->config(namespace => '');
 
-our $VERSION = '0.002';
+our $VERSION = '0.003';
 $VERSION = eval $VERSION;
 
 # /submit/CPAN-Testers-Report

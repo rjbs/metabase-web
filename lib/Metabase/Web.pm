@@ -6,7 +6,7 @@ use namespace::autoclean;
 use Catalyst::Runtime 5.80;
 use Catalyst qw/ConfigLoader/;
 
-our $VERSION = '0.002';
+our $VERSION = '0.003';
 $VERSION = eval $VERSION;
 
 __PACKAGE__->config(
