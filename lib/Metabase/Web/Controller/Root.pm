@@ -42,7 +42,7 @@ sub submit_POST {
   };
 
   if ( $guid ) {
-    $c->log->info("Accepted $type for $resource");
+    $c->log->info("OK $type for $resource");
     return $self->status_created(
       $c,
       location => "/guid/$guid", 
@@ -122,6 +122,7 @@ sub register_POST {
   };
 
   if ( $guid ) {
+    $c->log->info("OK registered metabase:user:$guid");
     return $self->status_created(
       $c,
       location => "/guid/$guid", 
@@ -145,7 +146,7 @@ sub _gateway_error {
   $c->log->error("gateway rejected fact: $error");
   my ($code, $reason) = $error =~ /\A([^:]+): (.+)/ms;
   $code   ||= 500;
-  $reason ||= 'internal ateway error';
+  $reason ||= 'internal gateway error';
   $c->response->status($code);
   $c->stash->{rest} = { error => $reason };
   return;
