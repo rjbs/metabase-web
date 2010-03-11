@@ -3,6 +3,7 @@ use inc::Module::Install;
 all_from('lib/Metabase/Web.pm');
 
 requires      ('Catalyst'                     => 5.80019 );
+requires      ('Catalyst::Model::Adaptor'     => 0.08    );
 requires      ('Catalyst::Runtime'            => 5.80019 );
 requires      ('Data::GUID'                   => 0.045   );
 requires      ('Moose'                        => 0.93    );
@@ -14,6 +15,7 @@ build_requires('JSON'                         => 2.17    );
 build_requires('Metabase::Archive::SQLite'    => 0.003   );
 build_requires('Metabase::Client::Simple'     => 0.003   );
 build_requires('Metabase::Fact::String'       => 0.003   );
+build_requires('Metabase::Gateway'            => 0       );
 build_requires('Metabase::Index::FlatFile'    => 0.003   );
 build_requires('Metabase::Librarian'          => 0.003   );
 build_requires('Metabase::User::Profile'      => 0.003   );
