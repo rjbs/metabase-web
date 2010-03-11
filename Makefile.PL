@@ -4,9 +4,11 @@ all_from('lib/Metabase/Web.pm');
 
 requires      ('Catalyst'                     => 5.80019 );
 requires      ('Catalyst::Model::Adaptor'     => 0.08    );
+requires      ('Catalyst::Plugin::ConfigLoader' => 0.27    );
+requires      ('Catalyst::Plugin::Log::Dispatch' => 0.11    );
 requires      ('Catalyst::Runtime'            => 5.80019 );
 requires      ('Data::GUID'                   => 0.045   );
-requires      ('Moose'                        => 0.93    );
+requires      ('Moose'                        => 0.99    );
 requires      ('namespace::autoclean'         => 0.09    );
 
 build_requires('Catalyst::Test'               => 0       );
