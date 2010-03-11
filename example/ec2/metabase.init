@@ -14,24 +14,22 @@
 
 . /lib/lsb/init-functions
 
-APPNAME=MyApp
+APPNAME=Metabase::Web
 UNIXNAME=$(echo $APPNAME | perl -pe 's/::/_/;$_=lc')
-APPDIR=/home/myapp/MyApp
+APPDIR=/home/ubuntu/git/metabase-web
 PROCS=5
-SOCKET=127.0.0.1:3001
+SOCKET=127.0.0.1:5000
+export CATALYST_CONFIG="/home/ubuntu/etc/metabase-web/beta.json"
+
 # Leave these unset and we won't try to setuid/setgid.
-USER=myapp
-GROUP=myapp
+USER=ubuntu
+GROUP=ubuntu
 # Set this if you have more than one instance of the app and you don't want
 # them to step on each other's pidfile.
-PIDSUFFIX=
+PIDSUFFIX=beta
 
 # local::lib path, if you want to use it.
-LOCALLIB=
-
-if [ -f "/etc/default/"$UNIXNAME ]; then
-. "/etc/default/"$UNIXNAME
-fi
+LOCALLIB=/home/ubuntu/perl5
 
 if [ -f "/etc/default/"$UNIXNAME ]; then
 . "/etc/default/"$UNIXNAME
@@ -48,9 +46,11 @@ fi
 
 PIDFILE=$PIDDIR/$UNIXNAME${PIDSUFFIX:+"-$PIDSUFFIX"}.pid
 
+# set PERL5LIB
 if [ -n "$LOCALLIB" ] ; then
-    eval `perl -I"$LOCALLIB" -Mlocal::lib="$LOCALLIB"`
+    eval `perl -I"$LOCALLIB/lib/perl5" -Mlocal::lib="$LOCALLIB"`
 fi
+export PERL5LIB=$PERL5LIB:$APPDIR/lib
 
 check_running() {
     [ -s $PIDFILE ] && kill -0 $(cat $PIDFILE) >/dev/null 2>&1
@@ -71,9 +71,10 @@ check_compile() {
 }
 
 _start() {
-  start-stop-daemon --start --quiet --    pidfile $PIDFILE --chdir $APPDIR \
+  start-stop-daemon --start --quiet --pidfile $PIDFILE --chdir $APPDIR \
     ${USER:+"--chuid"} $USER ${GROUP:+"--group"} $GROUP --background \
-    --startas $APPDIR/script/${UNIXNAME}_fastcgi.pl -- -n $PROCS -l $SOCKET -p $PIDFILE
+    --startas $APPDIR/script/${UNIXNAME}_fastcgi.pl -- -n $PROCS \
+    -l $SOCKET -p $PIDFILE
 
   for i in 1 2 3 4 5 6 7 8 9 10; do
     sleep 1

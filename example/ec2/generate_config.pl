@@ -24,6 +24,9 @@ my $config = {
 };
 
 my $config_file = file($opts->get_config);
+warn "\nWARNING: $config_file file does not have a .json suffix\n\n"
+    unless $config_file =~ /\.json$/;
+
 my $fh = $config_file->openw;
 print { $fh } JSON->new->encode($config);
 close $fh;
