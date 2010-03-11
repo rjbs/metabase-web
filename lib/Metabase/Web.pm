@@ -4,7 +4,7 @@ use Moose;
 use namespace::autoclean;
 
 use Catalyst::Runtime 5.80;
-use Catalyst qw/ConfigLoader/;
+use Catalyst qw/ConfigLoader Log::Dispatch/;
 
 our $VERSION = '0.003';
 $VERSION = eval $VERSION;

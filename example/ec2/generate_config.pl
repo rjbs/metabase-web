@@ -10,8 +10,8 @@ my $opts = Getopt::Lucid->getopt([
   Param("config|C")->required,
   Param("bucket|b")->required,
   Param("namespace|n")->required,
+  Param("logprefix|l")->required,
 ]);
-
 
 my $config = {
   'Model::Metabase' => {
@@ -20,7 +20,14 @@ my $config = {
       bucket => $opts->get_bucket,
       namespace => $opts->get_namespace,
     },        
-  }
+  },
+  'Log::Dispatch' => [
+    {
+      class => 'Syslog',
+      min_level => 'info',
+      ident => $opts->get_logprefix,
+    }
+  ],
 };
 
 my $config_file = file($opts->get_config);
